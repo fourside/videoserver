@@ -5,6 +5,7 @@ import (
 	"net/http"
 	"os"
 	"path/filepath"
+	"time"
 )
 
 func main() {
@@ -28,7 +29,7 @@ type Item struct {
 type Rss struct {
 	XMLName        xml.Name `xml:"rss"`
 	Version        string   `xml:"version,attr"`
-	Xmlns          string   `xml:"xmlns,attr"`
+	Xmlns          string   `xml:"xmlns:itunes,attr"`
 	ChannelDesc    string   `xml:"channel>description"`
 	ChannelTitle   string   `xml:"channel>title"`
 	ChannelPubDate string   `xml:"channel>pubDate"`
@@ -38,10 +39,10 @@ type Rss struct {
 func feed(w http.ResponseWriter, r *http.Request) {
 	rss := &Rss{
 		Version:        "2.0",
-		Xmlns:          "hoge.dtd",
-		ChannelDesc:    "channel desc",
-		ChannelTitle:   "title",
-		ChannelPubDate: "20110101",
+		Xmlns:          "http://www.itunes.com/dtds/podcast-1.0.dtd",
+		ChannelDesc:    "video podcast",
+		ChannelTitle:   "video podcast",
+		ChannelPubDate: time.Now().Format("Mon, 02 Jan 2006 03:04:05 -0700"),
 	}
 	items, err := items()
 	if err != nil {
