@@ -2,7 +2,6 @@ package main
 
 import (
 	"encoding/xml"
-	"fmt"
 	"net/http"
 	"os"
 	"path/filepath"
@@ -14,7 +13,7 @@ func main() {
 }
 
 type Enclosure struct {
-	Length int    `xml:"length,attr"`
+	Length int64  `xml:"length,attr"`
 	Type   string `xml:"type,attr"`
 	Url    string `xml:"url,attr"`
 }
@@ -44,27 +43,12 @@ func feed(w http.ResponseWriter, r *http.Request) {
 		ChannelTitle:   "title",
 		ChannelPubDate: "20110101",
 	}
-	rss.Item = []Item{
-		Item{
-			Title:       "hoge",
-			Description: "fuga",
-			PubDate:     "piyo",
-		},
-		Item{
-			Title:       "foo",
-			Description: "bar",
-			PubDate:     "baz",
-		},
-	}
-
-	mp4s, err := glob()
+	items, err := items()
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}
-	for _, mp4 := range mp4s {
-		fmt.Printf("%v (%d bytes) @%v\n", mp4.Name(), mp4.Size(), mp4.ModTime())
-	}
+	rss.Item = items
 
 	output, err := xml.MarshalIndent(rss, "", "  ")
 	if err != nil {
@@ -75,7 +59,30 @@ func feed(w http.ResponseWriter, r *http.Request) {
 	w.Write(output)
 }
 
-func glob() ([]os.FileInfo, error) {
+func items() ([]Item, error) {
+	mp4s, err := globVideos()
+	if err != nil {
+		return nil, err
+	}
+	var items []Item
+	for _, mp4 := range mp4s {
+		enclosure := Enclosure{
+			Type:   "video/mp4",
+			Length: mp4.Size(),
+			Url:    "",
+		}
+		item := Item{
+			Title:       mp4.Name(),
+			Description: mp4.Name(),
+			Enclosure:   enclosure,
+			PubDate:     mp4.ModTime().Format("Mon, 02 Jan 2006 03:04:05 -0700"),
+		}
+		items = append(items, item)
+	}
+	return items, nil
+}
+
+func globVideos() ([]os.FileInfo, error) {
 	files, err := filepath.Glob("public/*.mp4")
 	if err != nil {
 		return nil, err
