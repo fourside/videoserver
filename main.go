@@ -10,6 +10,7 @@ import (
 )
 
 func main() {
+	http.Handle("/public", http.FileServer(http.Dir("public")))
 	http.HandleFunc("/feed", feed)
 	http.ListenAndServe(":8080", nil)
 }
