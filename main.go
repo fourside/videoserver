@@ -3,6 +3,7 @@ package main
 import (
 	"encoding/xml"
 	"net/http"
+	"net/url"
 	"os"
 	"path/filepath"
 	"time"
@@ -44,7 +45,7 @@ func feed(w http.ResponseWriter, r *http.Request) {
 		ChannelTitle:   "video podcast",
 		ChannelPubDate: time.Now().Format("Mon, 02 Jan 2006 03:04:05 -0700"),
 	}
-	items, err := items()
+	items, err := items("http://" + r.Host + "/public")
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
@@ -60,7 +61,7 @@ func feed(w http.ResponseWriter, r *http.Request) {
 	w.Write(output)
 }
 
-func items() ([]Item, error) {
+func items(path string) ([]Item, error) {
 	mp4s, err := globVideos()
 	if err != nil {
 		return nil, err
@@ -70,7 +71,7 @@ func items() ([]Item, error) {
 		enclosure := Enclosure{
 			Type:   "video/mp4",
 			Length: mp4.Size(),
-			Url:    "",
+			Url:    path + "/" + url.PathEscape(mp4.Name()),
 		}
 		item := Item{
 			Title:       mp4.Name(),
