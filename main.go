@@ -18,6 +18,14 @@ func main() {
 }
 
 func postUrl(w http.ResponseWriter, r *http.Request) {
+	if r.Method != http.MethodPost {
+		w.WriteHeader(http.StatusMethodNotAllowed)
+		return
+	}
+	if r.Header.Get("Content-Type") != "application/json" {
+		w.WriteHeader(http.StatusNotAcceptable)
+		return
+	}
 	decoder := json.NewDecoder(r.Body)
 	var post PostUrl
 	err := decoder.Decode(&post)
@@ -25,6 +33,12 @@ func postUrl(w http.ResponseWriter, r *http.Request) {
 		w.WriteHeader(http.StatusBadRequest)
 		return
 	}
+	_, err = url.ParseRequestURI(post.Url)
+	if err != nil {
+		w.WriteHeader(http.StatusBadRequest)
+		return
+	}
+
 }
 
 type PostUrl struct {
