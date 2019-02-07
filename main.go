@@ -3,9 +3,11 @@ package main
 import (
 	"encoding/json"
 	"encoding/xml"
+	"fmt"
 	"net/http"
 	"net/url"
 	"os"
+	"os/exec"
 	"path/filepath"
 	"time"
 )
@@ -36,6 +38,12 @@ func postUrl(w http.ResponseWriter, r *http.Request) {
 	_, err = url.ParseRequestURI(post.Url)
 	if err != nil {
 		w.WriteHeader(http.StatusBadRequest)
+		return
+	}
+	err = exec.Command("firefox", post.Url).Start()
+	if err != nil {
+		w.WriteHeader(http.StatusBadRequest)
+		fmt.Printf("%v\n", err)
 		return
 	}
 
