@@ -2,6 +2,7 @@ package main
 
 import (
 	"encoding/xml"
+	"fmt"
 	"net/http"
 	"net/url"
 	"os"
@@ -10,7 +11,7 @@ import (
 )
 
 func main() {
-	http.Handle("/public", http.FileServer(http.Dir("public")))
+	http.Handle("/public/", http.FileServer(http.Dir(".")))
 	http.HandleFunc("/feed", feed)
 	http.ListenAndServe(":8080", nil)
 }
