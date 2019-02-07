@@ -1,8 +1,8 @@
 package main
 
 import (
+	"encoding/json"
 	"encoding/xml"
-	"fmt"
 	"net/http"
 	"net/url"
 	"os"
@@ -13,7 +13,22 @@ import (
 func main() {
 	http.Handle("/public/", http.FileServer(http.Dir(".")))
 	http.HandleFunc("/feed", feed)
+	http.HandleFunc("/url", postUrl)
 	http.ListenAndServe(":8080", nil)
+}
+
+func postUrl(w http.ResponseWriter, r *http.Request) {
+	decoder := json.NewDecoder(r.Body)
+	var post PostUrl
+	err := decoder.Decode(&post)
+	if err != nil {
+		w.WriteHeader(http.StatusBadRequest)
+		return
+	}
+}
+
+type PostUrl struct {
+	Url string `json:"url"`
 }
 
 type Enclosure struct {
