@@ -3,6 +3,7 @@ package main
 import (
 	"encoding/json"
 	"encoding/xml"
+	"fmt"
 	"net/http"
 	"net/url"
 	"os"
@@ -47,12 +48,26 @@ func postUrl(w http.ResponseWriter, r *http.Request) {
 
 }
 
-func errorResponse(w http.ResponseWriter, err error) {
-	http.Error(w, err.Error(), http.StatusBadRequest)
+func errorResponse(w http.ResponseWriter, error error) {
+	res, err := json.Marshal(ErrorResponse{
+		Message: error.Error(),
+	})
+	if err != nil {
+		fmt.Printf("%v\n", err)
+		http.Error(w, error.Error(), http.StatusBadRequest)
+		return
+	}
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(http.StatusBadRequest)
+	w.Write(res)
 }
 
 type PostUrl struct {
 	Url string `json:"url"`
+}
+
+type ErrorResponse struct {
+	Message string `json:"errorMessage"`
 }
 
 type Enclosure struct {
