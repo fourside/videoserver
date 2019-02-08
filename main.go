@@ -3,7 +3,6 @@ package main
 import (
 	"encoding/json"
 	"encoding/xml"
-	"fmt"
 	"net/http"
 	"net/url"
 	"os"
@@ -32,21 +31,24 @@ func postUrl(w http.ResponseWriter, r *http.Request) {
 	var post PostUrl
 	err := decoder.Decode(&post)
 	if err != nil {
-		w.WriteHeader(http.StatusBadRequest)
+		errorResponse(w, err)
 		return
 	}
 	_, err = url.ParseRequestURI(post.Url)
 	if err != nil {
-		w.WriteHeader(http.StatusBadRequest)
+		errorResponse(w, err)
 		return
 	}
 	err = exec.Command("firefox", post.Url).Start()
 	if err != nil {
-		w.WriteHeader(http.StatusBadRequest)
-		fmt.Printf("%v\n", err)
+		errorResponse(w, err)
 		return
 	}
 
+}
+
+func errorResponse(w http.ResponseWriter, err error) {
+	http.Error(w, err.Error(), http.StatusBadRequest)
 }
 
 type PostUrl struct {
