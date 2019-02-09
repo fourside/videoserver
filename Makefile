@@ -7,7 +7,7 @@ endif
 .DEFAULT_GOAL: $(NAME)
 
 $(NAME):
-	go build -v -o ${NAME}${EXT} main.go
+	go build -v -o ${NAME}${EXT}
 
 clean:
 	go clean
