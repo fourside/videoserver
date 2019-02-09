@@ -12,6 +12,10 @@ import (
 	"time"
 )
 
+const (
+	rfc822 = "Mon, 02 Jan 2006 03:04:05 -0700"
+)
+
 func main() {
 	http.Handle("/public/", http.FileServer(http.Dir(".")))
 	http.HandleFunc("/feed", feed)
@@ -103,7 +107,7 @@ func feed(w http.ResponseWriter, r *http.Request) {
 		Xmlns:          "http://www.itunes.com/dtds/podcast-1.0.dtd",
 		ChannelDesc:    "video podcast",
 		ChannelTitle:   "video podcast",
-		ChannelPubDate: time.Now().Format("Mon, 02 Jan 2006 03:04:05 -0700"),
+		ChannelPubDate: time.Now().Format(rfc822),
 	}
 	items, err := items("http://" + r.Host)
 	if err != nil {
@@ -137,7 +141,7 @@ func items(host string) ([]Item, error) {
 			Title:       mp4.Name(),
 			Description: mp4.Name(),
 			Enclosure:   enclosure,
-			PubDate:     mp4.ModTime().Format("Mon, 02 Jan 2006 03:04:05 -0700"),
+			PubDate:     mp4.ModTime().Format(rfc822),
 		}
 		items = append(items, item)
 	}
