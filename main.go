@@ -126,40 +126,28 @@ func feed(w http.ResponseWriter, r *http.Request) {
 }
 
 func items(host string) ([]Item, error) {
-	mp4s, err := globVideos()
+	mp4s, err := filepath.Glob("public/**/*.mp4")
 	if err != nil {
 		return nil, err
 	}
 	var items []Item
 	for _, mp4 := range mp4s {
+		stat, err := os.Stat(mp4)
+		if err != nil {
+			return nil, err
+		}
 		enclosure := Enclosure{
 			Type:   "video/mp4",
-			Length: mp4.Size(),
-			Url:    host + "/" + url.PathEscape(mp4.Name()),
+			Length: stat.Size(),
+			Url:    host + "/" + url.PathEscape(filepath.ToSlash(mp4)),
 		}
 		item := Item{
-			Title:       mp4.Name(),
-			Description: mp4.Name(),
+			Title:       stat.Name(),
+			Description: stat.Name(),
 			Enclosure:   enclosure,
-			PubDate:     mp4.ModTime().Format(rfc822),
+			PubDate:     stat.ModTime().Format(rfc822),
 		}
 		items = append(items, item)
 	}
 	return items, nil
-}
-
-func globVideos() ([]os.FileInfo, error) {
-	files, err := filepath.Glob("public/**/*.mp4")
-	if err != nil {
-		return nil, err
-	}
-	var stats []os.FileInfo
-	for _, file := range files {
-		stat, err := os.Stat(file)
-		if err != nil {
-			return nil, err
-		}
-		stats = append(stats, stat)
-	}
-	return stats, nil
 }
