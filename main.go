@@ -28,19 +28,22 @@ func postUrl(w http.ResponseWriter, r *http.Request) {
 		w.WriteHeader(http.StatusNotAcceptable)
 		return
 	}
+
 	decoder := json.NewDecoder(r.Body)
-	var post PostUrl
+	var post PostUrlRequest
 	err := decoder.Decode(&post)
 	if err != nil {
 		errorResponse(w, err)
 		return
 	}
+	fmt.Printf("%v - %v\n", post.Category, post.Url)
 	_, err = url.ParseRequestURI(post.Url)
 	if err != nil {
 		errorResponse(w, err)
 		return
 	}
-	err = exec.Command("firefox", post.Url).Start()
+	outputOption := fmt.Sprintf("public/%s/%%(title)s.%%(ext)s", post.Category)
+	err = exec.Command("youtube-dl", "-o", outputOption, "--write-thumbnail", "--no-mtime", post.Url).Start()
 	if err != nil {
 		errorResponse(w, err)
 		return
@@ -62,8 +65,9 @@ func errorResponse(w http.ResponseWriter, error error) {
 	w.Write(res)
 }
 
-type PostUrl struct {
-	Url string `json:"url"`
+type PostUrlRequest struct {
+	Url      string `json:"url"`
+	Category string `json:"category"`
 }
 
 type ErrorResponse struct {
@@ -101,7 +105,7 @@ func feed(w http.ResponseWriter, r *http.Request) {
 		ChannelTitle:   "video podcast",
 		ChannelPubDate: time.Now().Format("Mon, 02 Jan 2006 03:04:05 -0700"),
 	}
-	items, err := items("http://" + r.Host + "/public")
+	items, err := items("http://" + r.Host)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
@@ -117,7 +121,7 @@ func feed(w http.ResponseWriter, r *http.Request) {
 	w.Write(output)
 }
 
-func items(path string) ([]Item, error) {
+func items(host string) ([]Item, error) {
 	mp4s, err := globVideos()
 	if err != nil {
 		return nil, err
@@ -127,7 +131,7 @@ func items(path string) ([]Item, error) {
 		enclosure := Enclosure{
 			Type:   "video/mp4",
 			Length: mp4.Size(),
-			Url:    path + "/" + url.PathEscape(mp4.Name()),
+			Url:    host + "/" + url.PathEscape(mp4.Name()),
 		}
 		item := Item{
 			Title:       mp4.Name(),
@@ -141,7 +145,7 @@ func items(path string) ([]Item, error) {
 }
 
 func globVideos() ([]os.FileInfo, error) {
-	files, err := filepath.Glob("public/*.mp4")
+	files, err := filepath.Glob("public/**/*.mp4")
 	if err != nil {
 		return nil, err
 	}
