@@ -17,15 +17,20 @@ const (
 )
 
 func feed(w http.ResponseWriter, r *http.Request) {
+	vars := mux.Vars(r)
+	categoryTitle := ""
+	if vars["category"] != "" {
+		categoryTitle = " - " + vars["category"]
+	}
+
 	rss := &Rss{
 		Version:        "2.0",
 		Xmlns:          "http://www.itunes.com/dtds/podcast-1.0.dtd",
-		ChannelDesc:    "video podcast",
-		ChannelTitle:   "video podcast",
+		ChannelDesc:    "video podcast" + categoryTitle,
+		ChannelTitle:   "video podcast" + categoryTitle,
 		ChannelPubDate: time.Now().Format(rfc822),
 	}
 
-	vars := mux.Vars(r)
 	items, err := globItems("http://"+r.Host, vars["category"])
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
