@@ -12,6 +12,11 @@ import (
 	"time"
 )
 
+var (
+	publicDir = "public"
+	port      = "8080"
+)
+
 const (
 	rfc822 = "Mon, 02 Jan 2006 03:04:05 -0700"
 )
@@ -20,7 +25,18 @@ func main() {
 	http.Handle("/public/", http.FileServer(http.Dir(".")))
 	http.HandleFunc("/feed", feed)
 	http.HandleFunc("/url", postUrl)
-	http.ListenAndServe(":8080", nil)
+	http.ListenAndServe(":"+port, nil)
+}
+
+func init() {
+	envPublicDir := os.Getenv("PUBLIC_DIR")
+	if envPublicDir != "" {
+		publicDir = envPublicDir
+	}
+	envPort := os.Getenv("PORT")
+	if envPort != "" {
+		port = envPort
+	}
 }
 
 func postUrl(w http.ResponseWriter, r *http.Request) {
@@ -46,7 +62,7 @@ func postUrl(w http.ResponseWriter, r *http.Request) {
 		errorResponse(w, err)
 		return
 	}
-	outputOption := fmt.Sprintf("public/%s/%%(title)s.%%(ext)s", post.Category)
+	outputOption := fmt.Sprintf(publicDir+"/%s/%%(title)s.%%(ext)s", post.Category)
 	err = exec.Command("youtube-dl", "-o", outputOption, "--write-thumbnail", "--no-mtime", post.Url).Start()
 	if err != nil {
 		errorResponse(w, err)
@@ -126,7 +142,7 @@ func feed(w http.ResponseWriter, r *http.Request) {
 }
 
 func items(host string) ([]Item, error) {
-	mp4s, err := filepath.Glob("public/**/*.mp4")
+	mp4s, err := filepath.Glob(publicDir + "/**/*.mp4")
 	if err != nil {
 		return nil, err
 	}
