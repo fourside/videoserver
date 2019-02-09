@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"encoding/xml"
 	"fmt"
+	"github.com/gorilla/mux"
 	"net/http"
 	"net/url"
 	"os"
@@ -22,10 +23,12 @@ const (
 )
 
 func main() {
-	http.Handle("/public/", http.FileServer(http.Dir(".")))
-	http.HandleFunc("/feed", feed)
-	http.HandleFunc("/url", postUrl)
-	http.ListenAndServe(":"+port, nil)
+	router := mux.NewRouter()
+	router.HandleFunc("/feed", feed)
+	router.HandleFunc("/feed/{category}", feed)
+	router.HandleFunc("/url", postUrl)
+	router.PathPrefix("/public/").Handler(http.StripPrefix("/public/", http.FileServer(http.Dir(publicDir))))
+	http.ListenAndServe(":"+port, router)
 }
 
 func init() {
@@ -125,7 +128,8 @@ func feed(w http.ResponseWriter, r *http.Request) {
 		ChannelTitle:   "video podcast",
 		ChannelPubDate: time.Now().Format(rfc822),
 	}
-	items, err := items("http://" + r.Host)
+	vars := mux.Vars(r)
+	items, err := globItems("http://"+r.Host, vars["category"])
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
@@ -141,8 +145,13 @@ func feed(w http.ResponseWriter, r *http.Request) {
 	w.Write(output)
 }
 
-func items(host string) ([]Item, error) {
-	mp4s, err := filepath.Glob(publicDir + "/**/*.mp4")
+func globItems(host string, category string) ([]Item, error) {
+	cat := category
+	if category == "" {
+		cat = "**"
+	}
+	pattern := fmt.Sprintf("/%s/*.mp4", cat)
+	mp4s, err := filepath.Glob(publicDir + pattern)
 	if err != nil {
 		return nil, err
 	}
