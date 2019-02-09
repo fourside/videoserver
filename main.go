@@ -10,6 +10,7 @@ import (
 	"os"
 	"os/exec"
 	"path/filepath"
+	"sort"
 	"time"
 )
 
@@ -108,6 +109,7 @@ type Item struct {
 	Description string    `xml:"description"`
 	Enclosure   Enclosure `xml:"enclosure"`
 	PubDate     string    `xml:"pubDate"`
+	ModTime     time.Time `xml:"-"`
 }
 
 type Rss struct {
@@ -118,6 +120,20 @@ type Rss struct {
 	ChannelTitle   string   `xml:"channel>title"`
 	ChannelPubDate string   `xml:"channel>pubDate"`
 	Item           []Item   `xml:"channel>item"`
+}
+
+type Items []Item
+
+func (i Items) Len() int {
+	return len(i)
+}
+
+func (items Items) Swap(i, j int) {
+	items[i], items[j] = items[j], items[i]
+}
+
+func (items Items) Less(i, j int) bool {
+	return items[i].ModTime.Before(items[j].ModTime)
 }
 
 func feed(w http.ResponseWriter, r *http.Request) {
@@ -145,7 +161,7 @@ func feed(w http.ResponseWriter, r *http.Request) {
 	w.Write(output)
 }
 
-func globItems(host string, category string) ([]Item, error) {
+func globItems(host string, category string) (Items, error) {
 	cat := category
 	if category == "" {
 		cat = "**"
@@ -155,7 +171,7 @@ func globItems(host string, category string) ([]Item, error) {
 	if err != nil {
 		return nil, err
 	}
-	var items []Item
+	var items Items
 	for _, mp4 := range mp4s {
 		stat, err := os.Stat(mp4)
 		if err != nil {
@@ -171,8 +187,10 @@ func globItems(host string, category string) ([]Item, error) {
 			Description: stat.Name(),
 			Enclosure:   enclosure,
 			PubDate:     stat.ModTime().Format(rfc822),
+			ModTime:     stat.ModTime(),
 		}
 		items = append(items, item)
 	}
+	sort.Sort(items)
 	return items, nil
 }
