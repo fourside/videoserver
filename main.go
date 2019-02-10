@@ -1,9 +1,12 @@
 package main
 
 import (
+	"bufio"
 	"encoding/json"
 	"fmt"
 	"github.com/gorilla/mux"
+	"io"
+	"log"
 	"net/http"
 	"net/url"
 	"os"
@@ -60,12 +63,43 @@ func postUrl(w http.ResponseWriter, r *http.Request) {
 	}
 
 	outputOption := fmt.Sprintf(publicDir+"/%s/%%(title)s.%%(ext)s", post.Category)
-	err = exec.Command("youtube-dl", "-o", outputOption, "--write-thumbnail", "--no-mtime", post.Url).Start()
+	commandArgs := []string{
+		"-o",
+		outputOption,
+		"--write-thumbnail",
+		"--no-mtime",
+		"--newline",
+		"--no-overwrites",
+		post.Url,
+	}
+	cmd := exec.Command("youtube-dl", commandArgs...)
+
+	streamReader := func(r io.Reader, label string) {
+		scanner := bufio.NewScanner(r)
+		for scanner.Scan() {
+			log.Printf("[ %s ] %s", label, scanner.Text())
+		}
+	}
+
+	stdout, err := cmd.StdoutPipe()
 	if err != nil {
 		errorResponse(w, err)
 		return
 	}
+	stderr, err := cmd.StderrPipe()
+	if err != nil {
+		errorResponse(w, err)
+		return
+	}
+	go streamReader(stdout, "stdout")
+	go streamReader(stderr, "stderr")
 
+	err = cmd.Start()
+	if err != nil {
+		log.Printf("command failed: %v", err.Error())
+		errorResponse(w, err)
+		return
+	}
 }
 
 func errorResponse(w http.ResponseWriter, error error) {
