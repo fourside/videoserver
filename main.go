@@ -11,11 +11,13 @@ import (
 	"net/url"
 	"os"
 	"os/exec"
+	"regexp"
 )
 
 var (
-	publicDir = "public"
-	port      = "8080"
+	publicDir   = "public"
+	port        = "8080"
+	logPatttern = regexp.MustCompile(`(\d{1,3}\.\d%).+?(ETA.+)`)
 )
 
 func main() {
@@ -74,10 +76,20 @@ func postUrl(w http.ResponseWriter, r *http.Request) {
 	}
 	cmd := exec.Command("youtube-dl", commandArgs...)
 
-	streamReader := func(r io.Reader, label string) {
+	streamStdoutReader := func(r io.Reader) {
 		scanner := bufio.NewScanner(r)
 		for scanner.Scan() {
-			log.Printf("[ %s ] %s", label, scanner.Text())
+			stdout := scanner.Text()
+			result := logPatttern.FindSubmatch([]byte(stdout))
+			if len(result) > 0 {
+				log.Printf("progress: %s, %s", string(result[1]), string(result[2]))
+			}
+		}
+	}
+	streamStderrReader := func(r io.Reader) {
+		scanner := bufio.NewScanner(r)
+		for scanner.Scan() {
+			log.Printf("[err] %s", scanner.Text())
 		}
 	}
 
@@ -91,8 +103,8 @@ func postUrl(w http.ResponseWriter, r *http.Request) {
 		errorResponse(w, err)
 		return
 	}
-	go streamReader(stdout, "stdout")
-	go streamReader(stderr, "stderr")
+	go streamStdoutReader(stdout)
+	go streamStderrReader(stderr)
 
 	err = cmd.Start()
 	if err != nil {
