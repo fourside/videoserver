@@ -1,18 +1,24 @@
 package main
 
 import (
+	"bufio"
 	"encoding/json"
 	"fmt"
 	"github.com/gorilla/mux"
+	"io"
+	"log"
 	"net/http"
 	"net/url"
 	"os"
 	"os/exec"
+	"regexp"
 )
 
 var (
-	publicDir = "public"
-	port      = "8080"
+	publicDir   = "public"
+	port        = "8080"
+	logPatttern = regexp.MustCompile(`(\d{1,3}\.\d%).+?(ETA.+)`)
+	downloader  = "youtube-dl"
 )
 
 func main() {
@@ -60,12 +66,63 @@ func postUrl(w http.ResponseWriter, r *http.Request) {
 	}
 
 	outputOption := fmt.Sprintf(publicDir+"/%s/%%(title)s.%%(ext)s", post.Category)
-	err = exec.Command("youtube-dl", "-o", outputOption, "--write-thumbnail", "--no-mtime", post.Url).Start()
+	commandArgs := []string{
+		"-o",
+		outputOption,
+		"--write-thumbnail",
+		"--no-mtime",
+		"--newline",
+		"--no-overwrites",
+		post.Url,
+	}
+	cmd := exec.Command(downloader, commandArgs...)
+
+	streamStdoutReader := func(r io.Reader, url string) {
+		title := getVideoTitle(url)
+		scanner := bufio.NewScanner(r)
+		for scanner.Scan() {
+			stdout := scanner.Text()
+			result := logPatttern.FindSubmatch([]byte(stdout))
+			if len(result) > 0 {
+				log.Printf("%s : %s, %s", title, string(result[1]), string(result[2]))
+			}
+		}
+	}
+	streamStderrReader := func(r io.Reader) {
+		scanner := bufio.NewScanner(r)
+		for scanner.Scan() {
+			log.Printf("[err] %s", scanner.Text())
+		}
+	}
+
+	stdout, err := cmd.StdoutPipe()
 	if err != nil {
 		errorResponse(w, err)
 		return
 	}
+	stderr, err := cmd.StderrPipe()
+	if err != nil {
+		errorResponse(w, err)
+		return
+	}
+	go streamStdoutReader(stdout, post.Url)
+	go streamStderrReader(stderr)
 
+	err = cmd.Start()
+	if err != nil {
+		log.Printf("command failed: %v", err.Error())
+		errorResponse(w, err)
+		return
+	}
+}
+
+func getVideoTitle(url string) string {
+	commandArgs := []string{
+		"--get-title",
+		url,
+	}
+	out, _ := exec.Command(downloader, commandArgs...).CombinedOutput()
+	return string(out)
 }
 
 func errorResponse(w http.ResponseWriter, error error) {
