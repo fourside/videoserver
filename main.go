@@ -28,6 +28,8 @@ func main() {
 	router.HandleFunc("/feed", feed)
 	router.HandleFunc("/feed/{category}", feed)
 	router.HandleFunc("/url", postUrl)
+	router.HandleFunc("/list", list)
+	router.HandleFunc("/list/{category}", list)
 	router.PathPrefix("/public/").Handler(http.StripPrefix("/public/", http.FileServer(http.Dir(publicDir))))
 	http.ListenAndServe(":"+port, router)
 }
