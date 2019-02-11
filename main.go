@@ -18,6 +18,7 @@ var (
 	publicDir   = "public"
 	port        = "8080"
 	logPatttern = regexp.MustCompile(`(\d{1,3}\.\d%).+?(ETA.+)`)
+	downloader  = "youtube-dl"
 )
 
 func main() {
@@ -74,15 +75,16 @@ func postUrl(w http.ResponseWriter, r *http.Request) {
 		"--no-overwrites",
 		post.Url,
 	}
-	cmd := exec.Command("youtube-dl", commandArgs...)
+	cmd := exec.Command(downloader, commandArgs...)
 
-	streamStdoutReader := func(r io.Reader) {
+	streamStdoutReader := func(r io.Reader, url string) {
+		title := getVideoTitle(url)
 		scanner := bufio.NewScanner(r)
 		for scanner.Scan() {
 			stdout := scanner.Text()
 			result := logPatttern.FindSubmatch([]byte(stdout))
 			if len(result) > 0 {
-				log.Printf("progress: %s, %s", string(result[1]), string(result[2]))
+				log.Printf("%s : %s, %s", title, string(result[1]), string(result[2]))
 			}
 		}
 	}
@@ -103,7 +105,7 @@ func postUrl(w http.ResponseWriter, r *http.Request) {
 		errorResponse(w, err)
 		return
 	}
-	go streamStdoutReader(stdout)
+	go streamStdoutReader(stdout, post.Url)
 	go streamStderrReader(stderr)
 
 	err = cmd.Start()
@@ -112,6 +114,15 @@ func postUrl(w http.ResponseWriter, r *http.Request) {
 		errorResponse(w, err)
 		return
 	}
+}
+
+func getVideoTitle(url string) string {
+	commandArgs := []string{
+		"--get-title",
+		url,
+	}
+	out, _ := exec.Command(downloader, commandArgs...).CombinedOutput()
+	return string(out)
 }
 
 func errorResponse(w http.ResponseWriter, error error) {
