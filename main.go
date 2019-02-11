@@ -11,7 +11,9 @@ import (
 	"net/url"
 	"os"
 	"os/exec"
+	"path/filepath"
 	"regexp"
+	"strings"
 )
 
 var (
@@ -146,4 +148,9 @@ type PostUrlRequest struct {
 
 type ErrorResponse struct {
 	Message string `json:"errorMessage"`
+}
+
+func baseFilename(path string, ext string) string {
+	base := filepath.Base(path)
+	return strings.Replace(base, ext, "", -1)
 }
