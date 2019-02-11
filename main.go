@@ -126,7 +126,7 @@ func getVideoTitle(url string) string {
 		url,
 	}
 	out, _ := exec.Command(downloader, commandArgs...).CombinedOutput()
-	return string(out)
+	return strings.TrimRight(string(out), "\n")
 }
 
 func errorResponse(w http.ResponseWriter, error error) {
