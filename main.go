@@ -154,3 +154,9 @@ func baseFilename(path string, ext string) string {
 	base := filepath.Base(path)
 	return strings.Replace(base, ext, "", -1)
 }
+
+func escapeFilename(path string) string {
+	dir, file := filepath.Split(path)
+	escaped := filepath.Join(dir, url.PathEscape(file))
+	return escaped
+}

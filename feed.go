@@ -5,7 +5,6 @@ import (
 	"fmt"
 	"github.com/gorilla/mux"
 	"net/http"
-	"net/url"
 	"os"
 	"path/filepath"
 	"sort"
@@ -104,7 +103,7 @@ func globItems(host string, category string) (Items, error) {
 		enclosure := Enclosure{
 			Type:   "video/mp4",
 			Length: stat.Size(),
-			Url:    host + "/" + url.PathEscape(filepath.ToSlash(mp4)),
+			Url:    host + "/" + filepath.ToSlash(escapeFilename(mp4)),
 		}
 		baseName := baseFilename(stat.Name(), ".mp4")
 		item := Item{
