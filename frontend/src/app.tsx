@@ -1,12 +1,14 @@
 import * as React from 'react';
 
+import List from './list';
+
 export interface AppProps { name: string; }
 
 class App extends React.Component<AppProps, {}> {
   render() {
     return (
       <div>
-        <p>hello {this.props.name}</p>
+        <List/>
       </div>
     );
   }
