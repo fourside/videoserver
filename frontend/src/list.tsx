@@ -2,7 +2,11 @@ import * as React from 'react';
 
 import {Client} from './client';
 
-class List extends React.Component<{}, {}> {
+interface ListProps {
+  videos : Array<any>
+}
+
+class List extends React.Component<{}, ListProps> {
 
   constructor(props) {
     super(props);

@@ -2,9 +2,8 @@ import * as React from 'react';
 
 import List from './list';
 
-export interface AppProps { name: string; }
 
-class App extends React.Component<AppProps, {}> {
+class App extends React.Component<{}, {}> {
   render() {
     return (
       <div>
