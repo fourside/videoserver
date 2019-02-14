@@ -54,6 +54,8 @@ func glob(host string, category string) (Videos, error) {
 			Image:    host + "/" + filepath.ToSlash(escapeFilename(toJpegPath(mp4))),
 			Url:      host + "/" + escapedPath,
 			Category: category,
+			Bytes:    stat.Size(),
+			Mtime:    stat.ModTime().Format("2006-01-02 15:03:04 -0700"),
 			ModTime:  stat.ModTime(),
 		}
 		videos = append(videos, video)
@@ -78,7 +80,7 @@ func (v Videos) Swap(i, j int) {
 }
 
 func (v Videos) Less(i, j int) bool {
-	return v[i].ModTime.Before(v[j].ModTime)
+	return v[i].ModTime.After(v[j].ModTime)
 }
 
 type Videos []Video
@@ -87,7 +89,9 @@ type Video struct {
 	Image    string    `json:"image"`
 	Url      string    `json:"url"`
 	Category string    `json:"category"`
-	ModTime  time.Time `json:"mtime"`
+	Bytes    int64     `json:"bytes"`
+	Mtime    string    `json:"mtime"`
+	ModTime  time.Time `json:"-"`
 }
 type ListResponse struct {
 	VideoList Videos `json:"videos"`
