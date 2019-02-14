@@ -1,4 +1,5 @@
 import * as React from 'react';
+import prettyBytes from 'pretty-bytes';
 
 interface ItemProps {
   video : Video
@@ -36,7 +37,7 @@ export class Item extends React.Component<ItemProps, {}> {
                 <strong>{this.video.title}</strong>
               </p>
               <p>
-                <small>size: {this.video.bytes}</small>
+                <small>size: {prettyBytes(this.video.bytes)}</small>
               </p>
               <p>
                 <small>{this.video.mtime}</small>
