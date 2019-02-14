@@ -37,7 +37,7 @@ export class Item extends React.Component<ItemProps, {}> {
                 <strong>{this.video.title}</strong>
               </p>
               <p>
-                <small>size: {prettyBytes(this.video.bytes)}</small>
+                {tag({category: this.video.category})}
               </p>
               <p>
                 <small>{this.video.mtime}</small>
@@ -48,6 +48,7 @@ export class Item extends React.Component<ItemProps, {}> {
                     <i className="fas fa-download"></i>
                   </a>
                 </span>
+                <small>{prettyBytes(this.video.bytes)}</small>
               </p>
             </div>
           </div>
@@ -55,4 +56,21 @@ export class Item extends React.Component<ItemProps, {}> {
       </div>
     );
   }
+}
+
+interface TagProps {
+  category: string
+}
+function tag(props: TagProps) {
+  let tag;
+  if (props.category) {
+    tag = <span className="tag is-info">{props.category}</span>;
+  } else {
+    tag = "";
+  }
+  return (
+    <span>
+      {tag}
+    </span>
+  );
 }
