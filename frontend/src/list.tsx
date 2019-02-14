@@ -1,12 +1,13 @@
 import * as React from 'react';
 
 import {Client} from './client';
+import {Item, Video} from './item';
 
-interface ListProps {
-  videos : Array<any>
+interface ListState {
+  videos : Array<Video>
 }
 
-class List extends React.Component<{}, ListProps> {
+class List extends React.Component<{}, ListState> {
 
   constructor(props) {
     super(props);
@@ -15,7 +16,7 @@ class List extends React.Component<{}, ListProps> {
     }
   }
 
-  componentDidMount() {
+  componentWillMount() {
     new Client().getList()
       .then((json) => {
         this.setState({
@@ -28,9 +29,7 @@ class List extends React.Component<{}, ListProps> {
     return (
       <ul>
         {this.state.videos.map(video =>(
-          <li key={video.title}>
-            {video.title}
-          </li>
+          <Item video={video}/>
         ))}
       </ul>
     );
