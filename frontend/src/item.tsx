@@ -41,6 +41,13 @@ export class Item extends React.Component<ItemProps, {}> {
               <p>
                 <small>{this.video.mtime}</small>
               </p>
+              <p>
+                <span className="icon">
+                  <a href={this.video.url}>
+                    <i className="fas fa-download"></i>
+                  </a>
+                </span>
+              </p>
             </div>
           </div>
         </article>
