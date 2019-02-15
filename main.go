@@ -30,6 +30,7 @@ func main() {
 	router.HandleFunc("/api/url", postUrl)
 	router.HandleFunc("/api/list", list)
 	router.HandleFunc("/api/list/{category}", list)
+	router.HandleFunc("/api/category", category)
 	router.PathPrefix("/public/").Handler(http.StripPrefix("/public/", http.FileServer(http.Dir(publicDir))))
 	http.ListenAndServe(":"+port, router)
 }
