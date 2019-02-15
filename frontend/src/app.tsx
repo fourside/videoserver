@@ -1,6 +1,6 @@
 import * as React from 'react';
 
-import List from './list';
+import Router from './router';
 
 class App extends React.Component<{}, {}> {
   render() {
@@ -9,7 +9,7 @@ class App extends React.Component<{}, {}> {
         <header>
           <h1 className="title">video server</h1>
         </header>
-        <List/>
+        <Router />
       </main>
     );
   }

@@ -6,8 +6,15 @@ import {Item, Video} from './item';
 interface ListState {
   videos : Array<Video>
 }
+interface RouterProps {
+  match: {
+    params: {
+      category: string
+    }
+  }
+}
 
-class List extends React.Component<{}, ListState> {
+class List extends React.Component<RouterProps, ListState> {
 
   constructor(props) {
     super(props);
@@ -17,7 +24,8 @@ class List extends React.Component<{}, ListState> {
   }
 
   componentWillMount() {
-    new Client().getList()
+    const { category } = this.props.match.params;
+    new Client().getList(category)
       .then((json) => {
         this.setState({
           videos: json['videos']
@@ -27,11 +35,11 @@ class List extends React.Component<{}, ListState> {
 
   render() {
     return (
-      <ul>
+      <div>
         {this.state.videos.map(video =>(
-          <Item video={video}/>
+          <Item video={video} key={video.title}/>
         ))}
-      </ul>
+      </div>
     );
   }
 }
