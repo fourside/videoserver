@@ -1,11 +1,13 @@
 import * as React from 'react';
-import { BrowserRouter, Route, Link } from 'react-router-dom';
+import { BrowserRouter, Route } from 'react-router-dom';
 
+import Header from './header';
 import List from './list';
 
 export default () => (
   <BrowserRouter>
     <div>
+      <Header />
       <Route exact path="/" component={Home} />
       <Route exact path="/list" component={List} />
       <Route exact path="/list/:category" component={List} />
