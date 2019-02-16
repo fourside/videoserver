@@ -1,6 +1,6 @@
 import * as React from 'react';
 
-import {Client} from './client';
+import Client from './client';
 import {Item, Video} from './item';
 
 interface ListState {
@@ -26,9 +26,9 @@ class List extends React.Component<RouterProps, ListState> {
   componentWillMount() {
     const { category } = this.props.match.params;
     new Client().getList(category)
-      .then((json) => {
+      .then(json => {
         this.setState({
-          videos: json['videos']
+          videos: json
         })
       });
   }

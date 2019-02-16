@@ -1,17 +1,30 @@
 import * as React from 'react';
 import { NavLink } from 'react-router-dom';
 
+import Client from './client';
+
 interface MenuState {
   active: "" | "is-active"
+  category: Array<string>
 }
 export default class Menu extends React.Component<{}, MenuState> {
   button: HTMLElement;
   constructor(props) {
     super(props)
     this.state = {
-      active: ""
+      active: "",
+      category: []
     };
     document.addEventListener('click', this.handleExceptMenuClick.bind(this));
+  }
+
+  componentWillMount() {
+    new Client().getCategory()
+      .then((json) => {
+        this.setState({
+          category: json
+        })
+      });
   }
 
   componentWillUnmount() {
