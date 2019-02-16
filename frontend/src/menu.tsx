@@ -64,6 +64,9 @@ export default class Menu extends React.Component<{}, MenuState> {
           <div className="dropdown-content">
             <NavLink className="dropdown-item" exact to="/">Home</NavLink>
             <NavLink className="dropdown-item" exact to="/list">List</NavLink>
+            {this.state.category.map((category, i) => (
+              <NavLink className="dropdown-item" exact to={"/list/" + category} key={i} > List / {category}</NavLink>
+            ))}
             <a className="dropdown-item" href="/feed">RSS</a>
           </div>
         </div>
