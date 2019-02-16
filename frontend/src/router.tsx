@@ -10,7 +10,7 @@ export default () => (
       <Header />
       <Route exact path="/" component={Home} />
       <Route exact path="/list" component={List} />
-      <Route exact path="/list/:category" component={List} />
+      <Route path="/list/:category" component={List} />
     </div>
   </BrowserRouter>
 );
