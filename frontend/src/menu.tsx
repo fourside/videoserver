@@ -18,15 +18,6 @@ export default class Menu extends React.Component<{}, MenuState> {
     document.addEventListener('click', this.handleExceptMenuClick.bind(this));
   }
 
-  componentWillMount() {
-    new Client().getCategory()
-      .then((json) => {
-        this.setState({
-          category: json
-        })
-      });
-  }
-
   componentWillUnmount() {
     document.removeEventListener('click', this.handleExceptMenuClick.bind(this));
   }
@@ -48,6 +39,12 @@ export default class Menu extends React.Component<{}, MenuState> {
   }
 
   render() {
+    new Client().getCategory()
+      .then((json) => {
+        this.setState({
+          category: json
+        })
+      });
     return (
       <div className={this.state.active + " dropdown is-right"}>
 

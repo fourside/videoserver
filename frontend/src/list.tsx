@@ -23,7 +23,7 @@ class List extends React.Component<RouterProps, ListState> {
     }
   }
 
-  componentWillMount() {
+  render() {
     const { category } = this.props.match.params;
     new Client().getList(category)
       .then(json => {
@@ -31,9 +31,6 @@ class List extends React.Component<RouterProps, ListState> {
           videos: json
         })
       });
-  }
-
-  render() {
     return (
       <div>
         {this.state.videos.map(video =>(
