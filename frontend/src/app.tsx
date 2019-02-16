@@ -1,14 +1,13 @@
 import * as React from 'react';
 
+import Header from './header';
 import Router from './router';
 
 class App extends React.Component<{}, {}> {
   render() {
     return (
       <main>
-        <header>
-          <h1 className="title">video server</h1>
-        </header>
+        <Header />
         <Router />
       </main>
     );
