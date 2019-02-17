@@ -1,11 +1,13 @@
 import * as React from 'react';
 import { NavLink } from 'react-router-dom';
 
+import Modal from './modal';
 import Client from './client';
 
 interface MenuState {
   active: "" | "is-active"
   category: Array<string>
+  isModalOpen: boolean
 }
 export default class Menu extends React.Component<{}, MenuState> {
   button: HTMLElement;
@@ -13,7 +15,8 @@ export default class Menu extends React.Component<{}, MenuState> {
     super(props)
     this.state = {
       active: "",
-      category: []
+      category: [],
+      isModalOpen: false
     };
     document.addEventListener('click', this.handleExceptMenuClick.bind(this));
   }
@@ -38,6 +41,13 @@ export default class Menu extends React.Component<{}, MenuState> {
     }
   }
 
+  toggleModal() {
+    this.setState((prev, props) => {
+      const newState = !prev.isModalOpen;
+      return { isModalOpen: newState };
+    });
+  }
+
   render() {
     new Client().getCategory()
       .then((json) => {
@@ -60,6 +70,7 @@ export default class Menu extends React.Component<{}, MenuState> {
         <div className="dropdown-menu" id="dropdown-menu" role="menu">
           <div className="dropdown-content">
             <NavLink className="dropdown-item" exact to="/">Home</NavLink>
+            <a className="dropdown-item" onClick={() => this.toggleModal()} >Form</a>
             <NavLink className="dropdown-item" exact to="/list">List</NavLink>
             {this.state.category.map((category, i) => (
               <NavLink className="dropdown-item" exact to={"/list/" + category} key={i} > List / {category}</NavLink>
@@ -67,6 +78,11 @@ export default class Menu extends React.Component<{}, MenuState> {
             <a className="dropdown-item" href="/feed">RSS</a>
           </div>
         </div>
+
+        <Modal
+          closeModal={() => this.toggleModal()}
+          isOpen={this.state.isModalOpen}
+        />
 
       </div>
     );
