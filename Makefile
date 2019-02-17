@@ -6,13 +6,15 @@ endif
 
 .DEFAULT_GOAL: $(NAME)
 
-$(NAME):
+$(NAME): setup
 	go build -v -o ${NAME}${EXT}
 
 clean:
 	go clean
 
 setup:
+	dep ensure
+
 
 test:
 
