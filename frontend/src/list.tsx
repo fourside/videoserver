@@ -33,8 +33,8 @@ class List extends React.Component<RouterProps, ListState> {
       });
     return (
       <div>
-        {this.state.videos.map(video =>(
-          <Item video={video} key={video.title}/>
+        {this.state.videos.map((video, i) => (
+          <Item video={video} key={i}/>
         ))}
       </div>
     );
