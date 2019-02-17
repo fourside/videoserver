@@ -1,5 +1,7 @@
 import * as React from 'react';
 
+import VideoForm from './video_form';
+
 export default ({ closeModal, isOpen }) => {
   if(!isOpen) {
     return null;
@@ -10,16 +12,15 @@ export default ({ closeModal, isOpen }) => {
       <div className="modal-background" onClick={closeModal} />
       <div className="modal-card">
         <header className="modal-card-head">
-          <p className="modal-card-title">Title</p>
+          <p className="modal-card-title">Video Form</p>
           <button className="delete" onClick={closeModal} />
         </header>
         <section className="modal-card-body">
           <div className="content">
-            modal form
+            <VideoForm close={closeModal} />
           </div>
         </section>
         <footer className="modal-card-foot">
-          <a className="button" onClick={closeModal}>Cancel</a>
         </footer>
       </div>
     </div>

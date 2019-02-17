@@ -1,6 +1,7 @@
 
 const listUrl = '/api/list';
 const categoryUrl = '/api/category';
+const postUrlUrl = '/api/url';
 
 export default class Client {
   async getList(category :string) {
@@ -22,5 +23,14 @@ export default class Client {
       });
   }
 
+  async postUrl(data) {
+    return fetch(postUrlUrl, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json"
+      },
+      body: JSON.stringify(data)
+    });
+  }
 }
 
