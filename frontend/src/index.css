@@ -10,3 +10,17 @@ header {
   height: 256;
   width: 256px;
 }
+
+.http-notify {
+  position: absolute;
+  right:calc(500% - 100px);
+  top: 60%;
+  width: 200px;
+}
+.is-hidden {
+  opacity: 0.2;
+  transition: all 1s ease-out;
+}
+.is-shown {
+  opacity: 1;
+}

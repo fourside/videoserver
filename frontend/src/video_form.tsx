@@ -4,6 +4,7 @@ import Client from './client';
 
 interface VideoFormProps {
   close: () => void
+  notifyHttp: () => void
 }
 interface VideoFormState {
   url: string
@@ -28,8 +29,8 @@ export default class VideoForm extends React.Component<VideoFormProps, VideoForm
         url: this.state.url,
         category: this.state.category
       }).then(res => {
-        console.log(res);
         this.props.close();
+        this.props.notifyHttp();
       }).catch(err => {
         console.log(err);
       });

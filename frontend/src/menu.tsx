@@ -2,12 +2,14 @@ import * as React from 'react';
 import { NavLink } from 'react-router-dom';
 
 import Modal from './modal';
+import Notification from './notification';
 import Client from './client';
 
 interface MenuState {
   active: "" | "is-active"
   category: Array<string>
   isModalOpen: boolean
+  isNotified: boolean
 }
 export default class Menu extends React.Component<{}, MenuState> {
   button: HTMLElement;
@@ -16,7 +18,8 @@ export default class Menu extends React.Component<{}, MenuState> {
     this.state = {
       active: "",
       category: [],
-      isModalOpen: false
+      isModalOpen: false,
+      isNotified: false
     };
     document.addEventListener('click', this.handleExceptMenuClick.bind(this));
   }
@@ -46,6 +49,17 @@ export default class Menu extends React.Component<{}, MenuState> {
       const newState = !prev.isModalOpen;
       return { isModalOpen: newState };
     });
+  }
+
+  notifyHttp() {
+    this.setState({
+      isNotified: true
+    });
+    setTimeout(() => {
+      this.setState({
+        isNotified: false
+      });
+    }, 2000);
   }
 
   render() {
@@ -79,8 +93,10 @@ export default class Menu extends React.Component<{}, MenuState> {
           </div>
         </div>
 
+        <Notification message="OK!" isShown={this.state.isNotified}/>
         <Modal
           closeModal={() => this.toggleModal()}
+          notifyHttp={() => this.notifyHttp()}
           isOpen={this.state.isModalOpen}
         />
 
