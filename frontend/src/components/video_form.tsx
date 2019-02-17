@@ -1,6 +1,6 @@
 import * as React from 'react';
 
-import Client from './client';
+import Client from '../shared/client';
 
 interface VideoFormProps {
   close: () => void

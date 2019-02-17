@@ -3,7 +3,7 @@ import { NavLink } from 'react-router-dom';
 
 import Modal from './modal';
 import Notification from './notification';
-import Client from './client';
+import Client from '../shared/client';
 
 interface MenuState {
   active: "" | "is-active"

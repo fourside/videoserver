@@ -1,6 +1,6 @@
 import * as React from 'react';
 
-import Client from './client';
+import Client from '../shared/client';
 import {Item, Video} from './item';
 
 interface ListState {
