@@ -13,6 +13,7 @@ interface VideoFormState {
 }
 export default class VideoForm extends React.Component<VideoFormProps, VideoFormState> {
 
+  urlInput;
   constructor(props) {
     super(props);
     this.state = {
@@ -20,6 +21,10 @@ export default class VideoForm extends React.Component<VideoFormProps, VideoForm
       category: "",
       isValid: false
     };
+  }
+
+  componentDidMount() {
+    this.urlInput.focus();
   }
 
   handleSubmit(e) {
@@ -64,7 +69,9 @@ export default class VideoForm extends React.Component<VideoFormProps, VideoForm
           <label className="label">Video URL</label>
           <div className="control has-icons-left has-icons-right">
             <input className="input" name="url" type="text" placeholder="URL input"
-              onChange={(e) => this.handleUrlChange(e) } />
+              onChange={(e) => this.handleUrlChange(e)}
+              ref={input => {this.urlInput = input}}
+            />
             <span className="icon is-small is-left">
               <i className="fas fa-download"></i>
             </span>
