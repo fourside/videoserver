@@ -4,13 +4,14 @@ const categoryUrl = '/api/category';
 const postUrlUrl = '/api/url';
 
 export default class Client {
-  async getList(category :string) {
+  async getList(category :string, offset :number) {
     const url = category === undefined ? listUrl : listUrl + '/' + category;
-    return fetch(url)
+    const query = offset === 0 ? "" : `?offset=${offset}`;
+    return fetch(url + query)
       .then(res => {
         return res.json();
       }).then(json => {
-        return json["videos"]
+        return json
       });
   }
 
