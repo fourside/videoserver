@@ -37,7 +37,7 @@ export default class Menu extends React.Component<{}, MenuState> {
   }
 
   handleExceptMenuClick(e) {
-    if (this.button !== e.target) {
+    if (this.state.active === "is-active" && this.button !== e.target) {
       this.setState({
         active: ""
       });
