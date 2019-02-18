@@ -8,8 +8,13 @@ import (
 	"os"
 	"path/filepath"
 	"sort"
+	"strconv"
 	"strings"
 	"time"
+)
+
+const (
+	itemPerPage = 30
 )
 
 func list(w http.ResponseWriter, r *http.Request) {
@@ -19,9 +24,14 @@ func list(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}
+	total := len(videos)
+
+	offset := r.URL.Query()["offset"]
+	videos = slice(videos, offset)
 
 	res, err := json.Marshal(ListResponse{
 		VideoList: videos,
+		Total:     total,
 	})
 	if err != nil {
 		fmt.Printf("%v\n", err)
@@ -64,6 +74,26 @@ func glob(host string, category string) (Videos, error) {
 	return videos, nil
 }
 
+func slice(videos Videos, offsetParam []string) Videos {
+	offset := 0
+	if len(offsetParam) > 0 {
+		offset, _ = strconv.Atoi(offsetParam[0])
+	}
+
+	size := len(videos)
+	begin := offset * itemPerPage
+	if begin > size {
+		return Videos{}
+	}
+
+	end := begin + itemPerPage
+	if end > size {
+		return videos[begin:]
+	}
+
+	return videos[begin:end]
+}
+
 func toJpegPath(path string) string {
 	dir, file := filepath.Split(path)
 	jpeg := strings.Replace(file, ".mp4", ".jpg", -1)
@@ -95,4 +125,5 @@ type Video struct {
 }
 type ListResponse struct {
 	VideoList Videos `json:"videos"`
+	Total     int    `json:"total"`
 }
