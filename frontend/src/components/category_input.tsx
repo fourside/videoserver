@@ -1,5 +1,6 @@
 import * as React from 'react';
 import Downshift from 'downshift';
+import styled from 'styled-components';
 
 export default ({className, name, placeholder, onChange, item}) => {
 
@@ -21,25 +22,27 @@ export default ({className, name, placeholder, onChange, item}) => {
             placeholder={placeholder}
           />
           { isOpen ? (
-            <div>
-              {item
-                .filter(item => !inputValue || item.includes(inputValue))
-                .map((item, index) => (
-                  <div
-                    {...getItemProps({
-                      key: index,
-                      index,
-                      item,
-                      style: {
-                        backgroundColor:
-                          highlightedIndex === index ? 'lightgray' : 'white',
-                          fontWeight: selectedItem === item ? 'bold' : 'normal',
-                      },
-                    })}
-                  >
-                    {item}
-                  </div>
-                ))}
+            <div className="menu">
+              <DownshiftUl className="menu-list">
+                {item
+                  .filter(item => !inputValue || item.includes(inputValue))
+                  .map((item, index) => (
+                    <DownshiftLi
+                      {...getItemProps({
+                        key: index,
+                        index,
+                        item,
+                        style: {
+                          backgroundColor:
+                            highlightedIndex === index ? 'lightgray' : 'white',
+                            fontWeight: selectedItem === item ? 'bold' : 'normal',
+                        },
+                      })}
+                    >
+                      {item}
+                    </DownshiftLi>
+                  ))}
+              </DownshiftUl>
             </div>
           ) : null}
         </div>
@@ -47,3 +50,17 @@ export default ({className, name, placeholder, onChange, item}) => {
     </Downshift>
   );
 }
+
+
+const DownshiftUl = styled.ul`
+  list-style: none !important;
+  margin: 0 !important;
+  border-left: 1px solid rgb(219, 219, 219);
+  border-right: 1px solid rgb(219, 219, 219);
+  border-bottom: 1px solid rgb(219, 219, 219);
+  border-bottom-left-radius: 4px;
+  border-bottom-right-radius: 4px;
+`;
+const DownshiftLi = styled.li`
+  padding: 0.5em 0.75em;
+`;
