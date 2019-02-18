@@ -1,10 +1,12 @@
 import * as React from 'react';
 
+import CategoryInput from './category_input';
 import Client from '../shared/client';
 
 interface VideoFormProps {
   close: () => void
   notifyHttp: () => void
+  category: Array<string>
 }
 interface VideoFormState {
   url: string
@@ -49,9 +51,9 @@ export default class VideoForm extends React.Component<VideoFormProps, VideoForm
     this.isValid();
   }
 
-  handleCategoryChange(e) {
+  handleCategoryChange(value) {
     this.setState({
-      category: e.target.value
+      category: value
     })
     this.isValid();
   }
@@ -81,12 +83,10 @@ export default class VideoForm extends React.Component<VideoFormProps, VideoForm
         <div className="field">
           <label className="label">Category</label>
           <div className="control has-icons-left has-icons-right">
-            <input className="input" name="category" type="input" placeholder="Category input" list="cat"
-              onChange={(e) => this.handleCategoryChange(e) } />
-            <datalist id="cat">
-              <option value="music" />
-              <option value="xxx" />
-            </datalist>
+            <CategoryInput className="input" name="category" placeholder="Category input"
+              onChange={this.handleCategoryChange.bind(this) }
+              item={this.props.category}
+            />
             <span className="icon is-small is-left">
               <i className="fas fa-tag"></i>
             </span>

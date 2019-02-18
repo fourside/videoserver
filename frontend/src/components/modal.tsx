@@ -2,7 +2,7 @@ import * as React from 'react';
 
 import VideoForm from './video_form';
 
-export default ({ closeModal, notifyHttp, isOpen }) => {
+export default ({ closeModal, notifyHttp, isOpen, category }) => {
   if(!isOpen) {
     return null;
   }
@@ -17,7 +17,7 @@ export default ({ closeModal, notifyHttp, isOpen }) => {
         </header>
         <section className="modal-card-body">
           <div className="content">
-            <VideoForm close={closeModal} notifyHttp={notifyHttp}/>
+            <VideoForm close={closeModal} notifyHttp={notifyHttp} category={category} />
           </div>
         </section>
         <footer className="modal-card-foot">

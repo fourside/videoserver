@@ -21,6 +21,7 @@
   "dependencies": {
     "@fortawesome/fontawesome-free": "^5.7.2",
     "bulma": "^0.7.4",
+    "downshift": "^3.2.2",
     "pretty-bytes": "^5.1.0",
     "react": "^16.8.1",
     "react-dom": "^16.8.1",

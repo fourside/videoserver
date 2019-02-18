@@ -98,6 +98,7 @@ export default class Menu extends React.Component<{}, MenuState> {
           closeModal={() => this.toggleModal()}
           notifyHttp={() => this.notifyHttp()}
           isOpen={this.state.isModalOpen}
+          category={this.state.category}
         />
 
       </div>
