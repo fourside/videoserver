@@ -6,7 +6,7 @@ const postUrlUrl = '/api/url';
 export default class Client {
   async getList(category :string, offset :number) {
     const url = category === undefined ? listUrl : listUrl + '/' + category;
-    const query = offset === 0 ? "" : `?offset=${offset}`;
+    const query = (offset === 0 || offset === undefined) ? "" : `?offset=${offset}`;
     return fetch(url + query)
       .then(res => {
         return res.json();

@@ -28,9 +28,23 @@ class List extends React.Component<RouterProps, ListState> {
     }
   }
 
-  getList() {
+  componentDidMount() {
     const { category } = this.props.match.params;
     const offset = this.state.currentPage;
+    this.getList(category, offset);
+  }
+
+  componentWillReceiveProps(nextProps) {
+    const { category } = nextProps.match.params;
+    const offset = this.state.currentPage;
+    this.getList(category, offset);
+  }
+
+  shouldComponentUpdate(nextProps, nextState) {
+    return this.state.videos !== nextState.videos;
+  }
+
+  getList(category, offset) {
     new Client().getList(category, offset)
       .then(json => {
         this.setState({
@@ -44,15 +58,16 @@ class List extends React.Component<RouterProps, ListState> {
     this.setState({
       currentPage: i
     });
+    const { category } = this.props.match.params;
+    this.getList(category, i);
   }
 
   render() {
-    this.getList();
     return (
       <div>
         <Pager total={this.state.total} currentPage={this.state.currentPage} onChange={(i) => this.handlePagerClick(i)} />
-        {this.state.videos.map((video, i) => (
-          <Item video={video} key={i}/>
+        {this.state.videos.map((video) => (
+          <Item video={video} key={video.title}/>
         ))}
         <Pager total={this.state.total} currentPage={this.state.currentPage} onChange={(i) => this.handlePagerClick(i)} />
       </div>

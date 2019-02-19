@@ -28,6 +28,19 @@ export default class Menu extends React.Component<{}, MenuState> {
     document.removeEventListener('click', this.handleExceptMenuClick.bind(this));
   }
 
+  componentDidMount() {
+    this.getCategory();
+  }
+
+  getCategory() {
+    new Client().getCategory()
+      .then((json) => {
+        this.setState({
+          category: json
+        })
+      });
+  }
+
   handleMenuClick(e) {
     this.button = e.target;
     const active = this.state.active === "" ? "is-active" : "";
@@ -63,12 +76,6 @@ export default class Menu extends React.Component<{}, MenuState> {
   }
 
   render() {
-    new Client().getCategory()
-      .then((json) => {
-        this.setState({
-          category: json
-        })
-      });
     return (
       <div className={this.state.active + " dropdown is-right"}>
 
@@ -86,8 +93,8 @@ export default class Menu extends React.Component<{}, MenuState> {
             <NavLink className="dropdown-item" exact to="/">Home</NavLink>
             <a className="dropdown-item" onClick={() => this.toggleModal()} >Form</a>
             <NavLink className="dropdown-item" exact to="/list">List</NavLink>
-            {this.state.category.map((category, i) => (
-              <NavLink className="dropdown-item" exact to={"/list/" + category} key={i} > List / {category}</NavLink>
+            {this.state.category.map((category) => (
+              <NavLink className="dropdown-item" exact to={"/list/" + category} key={category} > List / {category}</NavLink>
             ))}
             <a className="dropdown-item" href="/feed">RSS</a>
           </div>
