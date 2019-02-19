@@ -2,7 +2,7 @@ import * as React from 'react';
 import Downshift from 'downshift';
 import styled from 'styled-components';
 
-export default ({className, name, placeholder, onChange, item}) => {
+export default ({className, name, placeholder, onChange, onBlur, item}) => {
 
   return (
     <Downshift onChange={onChange}>
@@ -19,6 +19,7 @@ export default ({className, name, placeholder, onChange, item}) => {
           <input {...getInputProps()}
             className={className}
             name={name}
+            onBlur={onBlur}
             placeholder={placeholder}
           />
           { isOpen ? (

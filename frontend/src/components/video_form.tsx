@@ -45,20 +45,21 @@ export default class VideoForm extends React.Component<VideoFormProps, VideoForm
   }
 
   handleUrlChange(e) {
+    const url = e.target.value;
     this.setState({
-      url: e.target.value
+      url: url,
+      isValid: !!(url) && !!(this.state.category)
     })
-    this.isValid();
   }
 
   handleCategoryChange(value) {
     this.setState({
-      category: value
+      category: value,
+      isValid: !!(this.state.url) && !!(value)
     })
-    this.isValid();
   }
 
-  isValid() {
+  validate() {
     this.setState({
       isValid: !!(this.state.url) && !!(this.state.category)
     })
@@ -72,6 +73,7 @@ export default class VideoForm extends React.Component<VideoFormProps, VideoForm
           <div className="control has-icons-left has-icons-right">
             <input className="input" name="url" type="text" placeholder="URL input"
               onChange={(e) => this.handleUrlChange(e)}
+              onBlur={() => this.validate()}
               ref={input => {this.urlInput = input}}
             />
             <span className="icon is-small is-left">
@@ -85,6 +87,7 @@ export default class VideoForm extends React.Component<VideoFormProps, VideoForm
           <div className="control has-icons-left has-icons-right">
             <CategoryInput className="input" name="category" placeholder="Category input"
               onChange={this.handleCategoryChange.bind(this) }
+              onBlur={() => this.validate()}
               item={this.props.category}
             />
             <span className="icon is-small is-left">
