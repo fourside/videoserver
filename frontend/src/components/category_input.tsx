@@ -5,7 +5,7 @@ import styled from 'styled-components';
 export default ({className, name, placeholder, onChange, onBlur, item}) => {
 
   return (
-    <Downshift onChange={onChange}>
+    <Downshift onChange={onChange} onInputValueChange={onChange}>
       {({
         getInputProps,
         getItemProps,
