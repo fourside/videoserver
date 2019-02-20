@@ -1,6 +1,8 @@
 import * as React from 'react';
 import prettyBytes from 'pretty-bytes';
 
+ require('lazysizes');
+
 interface ItemProps {
   video : Video
 }
@@ -28,7 +30,7 @@ export class Item extends React.Component<ItemProps, {}> {
         <article className="media">
           <div className="media-left">
             <figure className="image is-256x256">
-              <img src={this.video.image} alt={this.video.title} />
+              <img data-src={this.video.image} data-sizes="auto" className="lazyload" alt={this.video.title} />
             </figure>
           </div>
           <div className="media-content">
