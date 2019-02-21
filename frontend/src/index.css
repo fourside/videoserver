@@ -21,3 +21,7 @@ main {
 .is-shown {
   opacity: 1;
 }
+input[name="subtitle"] {
+  vertical-align: bottom;
+}
+

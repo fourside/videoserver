@@ -1,8 +1,12 @@
 import * as React from 'react';
+import styled from 'styled-components';
 
 import CategoryInput from './category_input';
 import Client from '../shared/client';
 
+const CheckboxText = styled.span`
+  padding-left: 5px;
+`;
 interface VideoFormProps {
   close: () => void
   notifyHttp: () => void
@@ -11,6 +15,7 @@ interface VideoFormProps {
 interface VideoFormState {
   url: string
   category: string
+  subtitle: boolean
   isValid: boolean
 }
 export default class VideoForm extends React.Component<VideoFormProps, VideoFormState> {
@@ -21,6 +26,7 @@ export default class VideoForm extends React.Component<VideoFormProps, VideoForm
     this.state = {
       url: "",
       category: "",
+      subtitle: false,
       isValid: false
     };
   }
@@ -34,7 +40,8 @@ export default class VideoForm extends React.Component<VideoFormProps, VideoForm
     if (this.state.isValid) {
       new Client().postUrl({
         url: this.state.url,
-        category: this.state.category
+        category: this.state.category,
+        subtitle: this.state.subtitle
       }).then(res => {
         this.props.close();
         this.props.notifyHttp();
@@ -57,6 +64,12 @@ export default class VideoForm extends React.Component<VideoFormProps, VideoForm
       category: value,
       isValid: !!(this.state.url) && !!(value)
     })
+  }
+
+  checkSubtitle(e) {
+    this.setState({
+      subtitle: e.target.checked
+    });
   }
 
   validate() {
@@ -94,6 +107,15 @@ export default class VideoForm extends React.Component<VideoFormProps, VideoForm
               <i className="fas fa-tag"></i>
             </span>
           </div>
+        </div>
+
+        <div className="field">
+          <label className="checkbox">
+            <div className="control">
+              <input type="checkbox" name="subtitle" onChange={(e) => this.checkSubtitle(e)} />
+              <CheckboxText >use subtitle</CheckboxText>
+            </div>
+          </label>
         </div>
 
         <div className="field is-grouped">

@@ -78,8 +78,11 @@ func postUrl(w http.ResponseWriter, r *http.Request) {
 		"--no-mtime",
 		"--newline",
 		"--no-overwrites",
-		post.Url,
 	}
+	if post.Subtitle {
+		commandArgs = append(commandArgs, "--write-auto-sub")
+	}
+	commandArgs = append(commandArgs, post.Url)
 	cmd := exec.Command(downloader, commandArgs...)
 
 	streamStdoutReader := func(r io.Reader, url string) {
@@ -147,6 +150,7 @@ func errorResponse(w http.ResponseWriter, error error) {
 type PostUrlRequest struct {
 	Url      string `json:"url"`
 	Category string `json:"category"`
+	Subtitle bool   `json:"subtitle"`
 }
 
 type ErrorResponse struct {
