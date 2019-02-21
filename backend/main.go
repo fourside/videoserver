@@ -8,15 +8,12 @@ import (
 	"net/url"
 	"os"
 	"path/filepath"
-	"regexp"
 	"strings"
 )
 
 var (
-	publicDir   = "public"
-	port        = "8080"
-	logPatttern = regexp.MustCompile(`(\d{1,3}\.\d%).+?(ETA.+)`)
-	downloader  = "youtube-dl"
+	publicDir = "public"
+	port      = "8080"
 )
 
 func main() {

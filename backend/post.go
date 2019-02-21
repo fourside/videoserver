@@ -9,7 +9,16 @@ import (
 	"net/http"
 	"net/url"
 	"os/exec"
+	"regexp"
 	"strings"
+)
+
+var (
+	logPatttern = regexp.MustCompile(`(\d{1,3}\.\d%).+?(ETA.+)`)
+)
+
+const (
+	downloader = "youtube-dl"
 )
 
 func postUrl(w http.ResponseWriter, r *http.Request) {
