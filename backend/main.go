@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"github.com/gorilla/mux"
+	"log"
 	"net/http"
 	"net/url"
 	"os"
@@ -17,6 +18,10 @@ var (
 )
 
 func main() {
+
+	logger := log.New(os.Stdout, "http: ", log.LstdFlags)
+	logger.Println("video server is starting...")
+
 	router := mux.NewRouter()
 	router.HandleFunc("/feed", feed)
 	router.HandleFunc("/feed/{category}", feed)
@@ -25,7 +30,15 @@ func main() {
 	router.HandleFunc("/api/list/{category}", list)
 	router.HandleFunc("/api/category", category)
 	router.PathPrefix("/public/").Handler(http.StripPrefix("/public/", http.FileServer(http.Dir(publicDir))))
-	http.ListenAndServe(":"+port, router)
+
+	server := &http.Server{
+		Addr:     ":" + port,
+		Handler:  logging(logger)(router),
+		ErrorLog: logger,
+	}
+	if err := server.ListenAndServe(); err != nil {
+		logger.Fatalf("could not listen on %s: %v", port, err)
+	}
 }
 
 func init() {
@@ -36,6 +49,17 @@ func init() {
 	envPort := os.Getenv("PORT")
 	if envPort != "" {
 		port = envPort
+	}
+}
+
+func logging(logger *log.Logger) func(http.Handler) http.Handler {
+	return func(next http.Handler) http.Handler {
+		return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+			defer func() {
+				logger.Println(r.Method, r.URL.Path)
+			}()
+			next.ServeHTTP(w, r)
+		})
 	}
 }
 
