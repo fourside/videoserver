@@ -18,6 +18,7 @@ export default class Header extends React.Component<{}, {}> {
 
 const HeaderWrapper = styled.header`
   display: flex;
+  padding: 15px 0;
 `;
 const MenuWrapper = styled.div`
   margin-left: auto;

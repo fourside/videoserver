@@ -3,9 +3,6 @@ main {
   margin: 0 auto;
   padding-bottom: 25px;
 }
-header {
-  padding: 15px 0;
-}
 .image.is-256x256 {
   height: 256;
   width: 256px;
