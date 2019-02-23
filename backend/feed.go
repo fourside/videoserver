@@ -3,16 +3,25 @@ package main
 import (
 	"encoding/xml"
 	"fmt"
-	"github.com/gorilla/mux"
 	"net/http"
 	"os"
 	"path/filepath"
 	"sort"
 	"time"
+
+	"github.com/gorilla/mux"
 )
 
 const (
 	rfc822 = "Mon, 02 Jan 2006 03:04:05 -0700"
+)
+
+var (
+	videoMimes = map[string]string{
+		".mp4":  "video/mp4",
+		".mkv":  "video/x-matroska",
+		".webm": "video/webm",
+	}
 )
 
 func feed(w http.ResponseWriter, r *http.Request) {
@@ -85,36 +94,36 @@ func (items Items) Less(i, j int) bool {
 }
 
 func globItems(host string, category string) (Items, error) {
-	cat := category
-	if category == "" {
-		cat = "**"
-	}
-	pattern := fmt.Sprintf("/%s/*.mp4", cat)
-	mp4s, err := filepath.Glob(publicDir + pattern)
-	if err != nil {
-		return nil, err
-	}
 	var items Items
-	for _, mp4 := range mp4s {
-		stat, err := os.Stat(mp4)
-		if err != nil {
-			return nil, err
+	searchPath := fmt.Sprintf("%s/%s/", publicDir, category)
+	err := filepath.Walk(searchPath, func(path string, stat os.FileInfo, err error) error {
+		if stat.IsDir() {
+			return nil
 		}
-		enclosure := Enclosure{
-			Type:   "video/mp4",
-			Length: stat.Size(),
-			Url:    host + "/" + filepath.ToSlash(escapeFilename(mp4)),
+		if contains(extensions, filepath.Ext(path)) {
+			escapedPath := filepath.ToSlash(escapeFilename(path))
+			enclosure := Enclosure{
+				Type:   videoMimes[filepath.Ext(path)],
+				Length: stat.Size(),
+				Url:    host + "/" + escapedPath,
+			}
+			baseName := baseFilename(stat.Name())
+			item := Item{
+				Title:       baseName,
+				Description: baseName,
+				Enclosure:   enclosure,
+				PubDate:     stat.ModTime().Format(rfc822),
+				ModTime:     stat.ModTime(),
+			}
+			items = append(items, item)
 		}
-		baseName := baseFilename(stat.Name())
-		item := Item{
-			Title:       baseName,
-			Description: baseName,
-			Enclosure:   enclosure,
-			PubDate:     stat.ModTime().Format(rfc822),
-			ModTime:     stat.ModTime(),
-		}
-		items = append(items, item)
+		return nil
+	})
+
+	if err != nil {
+		return items, err
 	}
+
 	sort.Sort(items)
 	return items, nil
 }

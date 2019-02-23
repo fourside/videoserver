@@ -17,8 +17,13 @@ import (
 )
 
 var (
-	publicDir = "public"
-	port      = "8080"
+	publicDir  = "public"
+	port       = "8080"
+	extensions = []string{
+		".mp4",
+		".webm",
+		".mkv",
+	}
 )
 
 func main() {
@@ -130,4 +135,13 @@ func escapeFilename(path string) string {
 	dir, file := filepath.Split(path)
 	escaped := filepath.Join(dir, url.PathEscape(file))
 	return escaped
+}
+
+func contains(hay []string, needle string) bool {
+	for _, target := range hay {
+		if target == needle {
+			return true
+		}
+	}
+	return false
 }

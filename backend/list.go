@@ -18,14 +18,6 @@ const (
 	itemPerPage = 30
 )
 
-var (
-	extensions = []string{
-		".mp4",
-		".webm",
-		".mkv",
-	}
-)
-
 func list(w http.ResponseWriter, r *http.Request) {
 	vars := mux.Vars(r)
 	videos, err := glob("http://"+r.Host, vars["category"])
@@ -112,15 +104,6 @@ func toJpegPath(path string) string {
 	jpeg := strings.Replace(file, ext, ".jpg", -1)
 	jpegPath := filepath.Join(dir, jpeg)
 	return jpegPath
-}
-
-func contains(hay []string, needle string) bool {
-	for _, target := range hay {
-		if target == needle {
-			return true
-		}
-	}
-	return false
 }
 
 func (v Videos) Len() int {
