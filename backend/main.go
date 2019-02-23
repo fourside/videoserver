@@ -55,12 +55,26 @@ func init() {
 func logging(logger *log.Logger) func(http.Handler) http.Handler {
 	return func(next http.Handler) http.Handler {
 		return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+			resRec := &ResponseRecorder{
+				status:         200,
+				ResponseWriter: w,
+			}
 			defer func() {
-				logger.Println(r.Method, r.URL.Path)
+				logger.Println(r.Method, r.URL.Path, resRec.status)
 			}()
-			next.ServeHTTP(w, r)
+			next.ServeHTTP(resRec, r)
 		})
 	}
+}
+
+type ResponseRecorder struct {
+	status int
+	http.ResponseWriter
+}
+
+func (h *ResponseRecorder) WriteHeader(code int) {
+	h.status = code
+	h.ResponseWriter.WriteHeader(code)
 }
 
 func errorResponse(w http.ResponseWriter, error error) {
