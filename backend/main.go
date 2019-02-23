@@ -1,15 +1,19 @@
 package main
 
 import (
+	"context"
 	"encoding/json"
 	"fmt"
-	"github.com/gorilla/mux"
 	"log"
 	"net/http"
 	"net/url"
 	"os"
+	"os/signal"
 	"path/filepath"
 	"strings"
+	"time"
+
+	"github.com/gorilla/mux"
 )
 
 var (
@@ -36,9 +40,30 @@ func main() {
 		Handler:  logging(logger)(router),
 		ErrorLog: logger,
 	}
+
+	done := make(chan bool)
+	quit := make(chan os.Signal, 1)
+	signal.Notify(quit, os.Interrupt)
+
+	go func() {
+		<-quit
+		logger.Println("video server is shutting down...")
+		ctx, cancel := context.WithTimeout(context.Background(), 30*time.Second)
+		defer cancel()
+
+		server.SetKeepAlivesEnabled(false)
+		if err := server.Shutdown(ctx); err != nil {
+			logger.Fatalf("could not gracefully shutdown: :%v\n", err)
+		}
+		close(done)
+	}()
+
 	if err := server.ListenAndServe(); err != nil {
-		logger.Fatalf("could not listen on %s: %v", port, err)
+		logger.Fatalf("could not listen on %s: %v\n", port, err)
 	}
+
+	<-done
+	logger.Println("video server is stopped")
 }
 
 func init() {
