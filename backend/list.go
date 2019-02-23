@@ -54,18 +54,21 @@ func list(w http.ResponseWriter, r *http.Request) {
 func glob(host string, category string) (Videos, error) {
 	var videos Videos
 	searchPath := fmt.Sprintf("%s/%s/", publicDir, category)
-	fmt.Println(searchPath)
 	err := filepath.Walk(searchPath, func(path string, stat os.FileInfo, err error) error {
 		if stat.IsDir() {
 			return nil
 		}
 		if contains(extensions, filepath.Ext(path)) {
 			escapedPath := filepath.ToSlash(escapeFilename(path))
+			cat := category
+			if category == "" {
+				cat = filepath.Base(filepath.Dir(path))
+			}
 			video := Video{
 				Title:    baseFilename(path),
 				Image:    host + "/" + filepath.ToSlash(escapeFilename(toJpegPath(path))),
 				Url:      host + "/" + escapedPath,
-				Category: category,
+				Category: cat,
 				Bytes:    stat.Size(),
 				Mtime:    stat.ModTime().Format("2006-01-02 15:03:04 -0700"),
 				ModTime:  stat.ModTime(),
