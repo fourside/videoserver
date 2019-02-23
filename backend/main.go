@@ -120,8 +120,9 @@ type ErrorResponse struct {
 	Message string `json:"errorMessage"`
 }
 
-func baseFilename(path string, ext string) string {
+func baseFilename(path string) string {
 	base := filepath.Base(path)
+	ext := filepath.Ext(path)
 	return strings.Replace(base, ext, "", -1)
 }
 

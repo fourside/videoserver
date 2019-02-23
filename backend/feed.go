@@ -105,7 +105,7 @@ func globItems(host string, category string) (Items, error) {
 			Length: stat.Size(),
 			Url:    host + "/" + filepath.ToSlash(escapeFilename(mp4)),
 		}
-		baseName := baseFilename(stat.Name(), ".mp4")
+		baseName := baseFilename(stat.Name())
 		item := Item{
 			Title:       baseName,
 			Description: baseName,

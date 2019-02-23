@@ -3,7 +3,6 @@ package main
 import (
 	"encoding/json"
 	"fmt"
-	"github.com/gorilla/mux"
 	"net/http"
 	"os"
 	"path/filepath"
@@ -11,10 +10,20 @@ import (
 	"strconv"
 	"strings"
 	"time"
+
+	"github.com/gorilla/mux"
 )
 
 const (
 	itemPerPage = 30
+)
+
+var (
+	extensions = []string{
+		".mp4",
+		".webm",
+		".mkv",
+	}
 )
 
 func list(w http.ResponseWriter, r *http.Request) {
@@ -43,33 +52,33 @@ func list(w http.ResponseWriter, r *http.Request) {
 }
 
 func glob(host string, category string) (Videos, error) {
-	cat := category
-	if category == "" {
-		cat = "**"
-	}
-	pattern := fmt.Sprintf("/%s/*.mp4", cat)
-	mp4s, err := filepath.Glob(publicDir + pattern)
-	if err != nil {
-		return nil, err
-	}
 	var videos Videos
-	for _, mp4 := range mp4s {
-		stat, err := os.Stat(mp4)
-		if err != nil {
-			return nil, err
+	searchPath := fmt.Sprintf("%s/%s/", publicDir, category)
+	fmt.Println(searchPath)
+	err := filepath.Walk(searchPath, func(path string, stat os.FileInfo, err error) error {
+		if stat.IsDir() {
+			return nil
 		}
-		escapedPath := filepath.ToSlash(escapeFilename(mp4))
-		video := Video{
-			Title:    baseFilename(mp4, ".mp4"),
-			Image:    host + "/" + filepath.ToSlash(escapeFilename(toJpegPath(mp4))),
-			Url:      host + "/" + escapedPath,
-			Category: category,
-			Bytes:    stat.Size(),
-			Mtime:    stat.ModTime().Format("2006-01-02 15:03:04 -0700"),
-			ModTime:  stat.ModTime(),
+		if contains(extensions, filepath.Ext(path)) {
+			escapedPath := filepath.ToSlash(escapeFilename(path))
+			video := Video{
+				Title:    baseFilename(path),
+				Image:    host + "/" + filepath.ToSlash(escapeFilename(toJpegPath(path))),
+				Url:      host + "/" + escapedPath,
+				Category: category,
+				Bytes:    stat.Size(),
+				Mtime:    stat.ModTime().Format("2006-01-02 15:03:04 -0700"),
+				ModTime:  stat.ModTime(),
+			}
+			videos = append(videos, video)
 		}
-		videos = append(videos, video)
+		return nil
+	})
+
+	if err != nil {
+		return videos, err
 	}
+
 	sort.Sort(videos)
 	return videos, nil
 }
@@ -96,9 +105,19 @@ func slice(videos Videos, offsetParam []string) Videos {
 
 func toJpegPath(path string) string {
 	dir, file := filepath.Split(path)
-	jpeg := strings.Replace(file, ".mp4", ".jpg", -1)
+	ext := filepath.Ext(file)
+	jpeg := strings.Replace(file, ext, ".jpg", -1)
 	jpegPath := filepath.Join(dir, jpeg)
 	return jpegPath
+}
+
+func contains(hay []string, needle string) bool {
+	for _, target := range hay {
+		if target == needle {
+			return true
+		}
+	}
+	return false
 }
 
 func (v Videos) Len() int {
