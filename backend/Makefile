@@ -6,7 +6,7 @@ endif
 
 .DEFAULT_GOAL: $(NAME)
 
-$(NAME): setup
+$(NAME): setup lint
 	go build -v -o ${NAME}${EXT}
 
 clean:
@@ -19,5 +19,7 @@ setup:
 test:
 
 lint:
+	go vet $(*.go)
+	golint
 
 .PHONY: clean setup test lint
