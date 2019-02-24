@@ -3,11 +3,9 @@ import { NavLink } from 'react-router-dom';
 
 import Modal from './modal';
 import Notification from './notification';
-import Client from '../shared/client';
 
 interface MenuState {
   active: "" | "is-active"
-  category: Array<string>
   isModalOpen: boolean
   isNotified: boolean
 }
@@ -17,7 +15,6 @@ export default class Menu extends React.Component<{}, MenuState> {
     super(props)
     this.state = {
       active: "",
-      category: [],
       isModalOpen: false,
       isNotified: false
     };
@@ -26,19 +23,6 @@ export default class Menu extends React.Component<{}, MenuState> {
 
   componentWillUnmount() {
     document.removeEventListener('click', this.handleExceptMenuClick.bind(this));
-  }
-
-  componentDidMount() {
-    this.getCategory();
-  }
-
-  getCategory() {
-    new Client().getCategory()
-      .then((json) => {
-        this.setState({
-          category: json
-        })
-      });
   }
 
   handleMenuClick(e) {
@@ -93,9 +77,6 @@ export default class Menu extends React.Component<{}, MenuState> {
             <NavLink className="dropdown-item" exact to="/">Home</NavLink>
             <a className="dropdown-item" onClick={() => this.toggleModal()} >Form</a>
             <NavLink className="dropdown-item" exact to="/list">List</NavLink>
-            {this.state.category.map((category) => (
-              <NavLink className="dropdown-item" exact to={"/list/" + category} key={category} > List / {category}</NavLink>
-            ))}
             <a className="dropdown-item" href="/feed">RSS</a>
           </div>
         </div>
@@ -105,7 +86,6 @@ export default class Menu extends React.Component<{}, MenuState> {
           closeModal={() => this.toggleModal()}
           notifyHttp={() => this.notifyHttp()}
           isOpen={this.state.isModalOpen}
-          category={this.state.category}
         />
 
       </div>

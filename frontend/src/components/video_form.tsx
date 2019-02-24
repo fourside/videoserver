@@ -10,13 +10,13 @@ const CheckboxText = styled.span`
 interface VideoFormProps {
   close: () => void
   notifyHttp: () => void
-  category: Array<string>
 }
 interface VideoFormState {
   url: string
   category: string
   subtitle: boolean
   isValid: boolean
+  categories: Array<string>
 }
 export default class VideoForm extends React.Component<VideoFormProps, VideoFormState> {
 
@@ -27,12 +27,23 @@ export default class VideoForm extends React.Component<VideoFormProps, VideoForm
       url: "",
       category: "",
       subtitle: false,
-      isValid: false
+      isValid: false,
+      categories: []
     };
   }
 
   componentDidMount() {
     this.urlInput.focus();
+    this.getCategory();
+  }
+
+  getCategory() {
+    new Client().getCategory()
+      .then((json) => {
+        this.setState({
+          categories: json
+        })
+      });
   }
 
   handleSubmit(e) {
@@ -101,7 +112,7 @@ export default class VideoForm extends React.Component<VideoFormProps, VideoForm
             <CategoryInput className="input" name="category" placeholder="Category input"
               onChange={this.handleCategoryChange.bind(this) }
               onBlur={() => this.validate()}
-              item={this.props.category}
+              item={this.state.categories}
             />
             <span className="icon is-small is-left">
               <i className="fas fa-tag"></i>
