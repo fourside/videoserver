@@ -4,7 +4,7 @@ import { BrowserRouter, Switch, Route } from 'react-router-dom';
 import Header from './header';
 import List from './list';
 
-export default () => (
+const Router = () => (
   <BrowserRouter>
     <div>
       <Header />
@@ -23,3 +23,5 @@ const Home = () => (
     home
   </h2>
 );
+
+export default Router;

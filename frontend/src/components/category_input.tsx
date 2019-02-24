@@ -2,14 +2,22 @@ import * as React from 'react';
 import Downshift from 'downshift';
 import styled from 'styled-components';
 
-export default ({className, name, placeholder, onChange, onBlur, item}) => {
+interface CategoryInputProps {
+  className: string
+  name: string
+  placeholder: string
+  onChange: () => void
+  onBlur: () => void
+  item: Array<string>
+}
+
+const CategoryInput = ({className, name, placeholder, onChange, onBlur, item} : CategoryInputProps) => {
 
   return (
     <Downshift onChange={onChange} onInputValueChange={onChange}>
       {({
         getInputProps,
         getItemProps,
-        getLabelProps,
         isOpen,
         inputValue,
         highlightedIndex,
@@ -29,6 +37,7 @@ export default ({className, name, placeholder, onChange, onBlur, item}) => {
                   .filter(item => !inputValue || item.includes(inputValue))
                   .map((item, index) => (
                     <DownshiftLi
+                      key={index}
                       {...getItemProps({
                         key: index,
                         index,
@@ -65,3 +74,5 @@ const DownshiftUl = styled.ul`
 const DownshiftLi = styled.li`
   padding: 0.5em 0.75em;
 `;
+
+export default CategoryInput;

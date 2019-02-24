@@ -1,6 +1,11 @@
 import * as React from 'react';
 
-export default ({current, categories, onChange}) => (
+interface SelectProps {
+  current: string
+  categories: Array<string>
+  onChange: () => void
+}
+const select = ({current, categories, onChange} : SelectProps) => (
   <div className="control has-icons-left">
     <div className="select is-small">
       <select onChange={onChange} value={current}>
@@ -17,3 +22,5 @@ export default ({current, categories, onChange}) => (
     </div>
   </div>
 );
+
+export default select;

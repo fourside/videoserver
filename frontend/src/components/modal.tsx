@@ -2,7 +2,12 @@ import * as React from 'react';
 
 import VideoForm from './video_form';
 
-export default ({ closeModal, notifyHttp, isOpen}) => {
+interface ModalProps {
+  closeModal: () => void
+  notifyHttp: () => void
+  isOpen: boolean
+}
+const Modal = ({ closeModal, notifyHttp, isOpen} : ModalProps) => {
   if(!isOpen) {
     return null;
   }
@@ -27,3 +32,5 @@ export default ({ closeModal, notifyHttp, isOpen}) => {
   );
 }
 
+
+export default Modal;

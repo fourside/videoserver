@@ -42,7 +42,7 @@ export default class Menu extends React.Component<{}, MenuState> {
   }
 
   toggleModal() {
-    this.setState((prev, props) => {
+    this.setState((prev) => {
       const newState = !prev.isModalOpen;
       return { isModalOpen: newState };
     });
