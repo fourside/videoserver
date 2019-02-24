@@ -34,7 +34,7 @@ func main() {
 	router := mux.NewRouter()
 	router.HandleFunc("/feed", feed)
 	router.HandleFunc("/feed/{category}", feed)
-	router.HandleFunc("/api/url", postUrl)
+	router.HandleFunc("/api/url", postURL)
 	router.HandleFunc("/api/list", list)
 	router.HandleFunc("/api/list/{category}", list)
 	router.HandleFunc("/api/category", category)
@@ -85,7 +85,7 @@ func init() {
 func logging(logger *log.Logger) func(http.Handler) http.Handler {
 	return func(next http.Handler) http.Handler {
 		return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-			resRec := &ResponseRecorder{
+			resRec := &responseRecorder{
 				status:         200,
 				ResponseWriter: w,
 			}
@@ -97,18 +97,18 @@ func logging(logger *log.Logger) func(http.Handler) http.Handler {
 	}
 }
 
-type ResponseRecorder struct {
+type responseRecorder struct {
 	status int
 	http.ResponseWriter
 }
 
-func (h *ResponseRecorder) WriteHeader(code int) {
+func (h *responseRecorder) WriteHeader(code int) {
 	h.status = code
 	h.ResponseWriter.WriteHeader(code)
 }
 
-func errorResponse(w http.ResponseWriter, error error) {
-	res, err := json.Marshal(ErrorResponse{
+func responseError(w http.ResponseWriter, error error) {
+	res, err := json.Marshal(errorResponse{
 		Message: error.Error(),
 	})
 	if err != nil {
@@ -118,10 +118,12 @@ func errorResponse(w http.ResponseWriter, error error) {
 	}
 	w.Header().Set("Content-Type", "application/json")
 	w.WriteHeader(http.StatusBadRequest)
-	w.Write(res)
+	if _, err := w.Write(res); err != nil {
+		fmt.Printf("%v\n", err)
+	}
 }
 
-type ErrorResponse struct {
+type errorResponse struct {
 	Message string `json:"errorMessage"`
 }
 

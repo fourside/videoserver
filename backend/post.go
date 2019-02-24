@@ -7,7 +7,7 @@ import (
 	"net/url"
 )
 
-func postUrl(w http.ResponseWriter, r *http.Request) {
+func postURL(w http.ResponseWriter, r *http.Request) {
 	if r.Method != http.MethodPost {
 		w.WriteHeader(http.StatusMethodNotAllowed)
 		return
@@ -18,29 +18,29 @@ func postUrl(w http.ResponseWriter, r *http.Request) {
 	}
 
 	decoder := json.NewDecoder(r.Body)
-	var post PostUrlRequest
+	var post postURLRequest
 	err := decoder.Decode(&post)
 	if err != nil {
-		errorResponse(w, err)
+		responseError(w, err)
 		return
 	}
 
-	_, err = url.ParseRequestURI(post.Url)
+	_, err = url.ParseRequestURI(post.URL)
 	if err != nil {
-		errorResponse(w, err)
+		responseError(w, err)
 		return
 	}
 
-	err = download(post.Url, post.Category, post.Subtitle)
+	err = download(post.URL, post.Category, post.Subtitle)
 	if err != nil {
 		log.Printf("command failed: %v", err.Error())
-		errorResponse(w, err)
+		responseError(w, err)
 		return
 	}
 }
 
-type PostUrlRequest struct {
-	Url      string `json:"url"`
+type postURLRequest struct {
+	URL      string `json:"url"`
 	Category string `json:"category"`
 	Subtitle bool   `json:"subtitle"`
 }

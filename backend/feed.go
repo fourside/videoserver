@@ -31,7 +31,7 @@ func feed(w http.ResponseWriter, r *http.Request) {
 		categoryTitle = " - " + vars["category"]
 	}
 
-	rss := &Rss{
+	feed := &rss{
 		Version:        "2.0",
 		Xmlns:          "http://www.itunes.com/dtds/podcast-1.0.dtd",
 		ChannelDesc:    "video podcast" + categoryTitle,
@@ -44,57 +44,59 @@ func feed(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}
-	rss.Item = items
+	feed.Item = items
 
-	output, err := xml.MarshalIndent(rss, "", "  ")
+	output, err := xml.MarshalIndent(feed, "", "  ")
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}
 	w.Header().Set("Content-Type", "application/xml")
-	w.Write(output)
+	if _, err := w.Write(output); err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+	}
 }
 
-type Enclosure struct {
+type enclosure struct {
 	Length int64  `xml:"length,attr"`
 	Type   string `xml:"type,attr"`
-	Url    string `xml:"url,attr"`
+	URL    string `xml:"url,attr"`
 }
 
-type Item struct {
+type item struct {
 	Title       string    `xml:"title"`
 	Description string    `xml:"description"`
-	Enclosure   Enclosure `xml:"enclosure"`
+	Enclosure   enclosure `xml:"enclosure"`
 	PubDate     string    `xml:"pubDate"`
 	ModTime     time.Time `xml:"-"`
 }
 
-type Rss struct {
+type rss struct {
 	XMLName        xml.Name `xml:"rss"`
 	Version        string   `xml:"version,attr"`
 	Xmlns          string   `xml:"xmlns:itunes,attr"`
 	ChannelDesc    string   `xml:"channel>description"`
 	ChannelTitle   string   `xml:"channel>title"`
 	ChannelPubDate string   `xml:"channel>pubDate"`
-	Item           []Item   `xml:"channel>item"`
+	Item           []item   `xml:"channel>item"`
 }
 
-type Items []Item
+type items []item
 
-func (i Items) Len() int {
-	return len(i)
+func (is items) Len() int {
+	return len(is)
 }
 
-func (items Items) Swap(i, j int) {
-	items[i], items[j] = items[j], items[i]
+func (is items) Swap(i, j int) {
+	is[i], is[j] = is[j], is[i]
 }
 
-func (items Items) Less(i, j int) bool {
-	return items[i].ModTime.Before(items[j].ModTime)
+func (is items) Less(i, j int) bool {
+	return is[i].ModTime.Before(is[j].ModTime)
 }
 
-func globItems(host string, category string) (Items, error) {
-	var items Items
+func globItems(host string, category string) (items, error) {
+	var itemList items
 	searchPath := fmt.Sprintf("%s/%s/", publicDir, category)
 	err := filepath.Walk(searchPath, func(path string, stat os.FileInfo, err error) error {
 		if stat.IsDir() {
@@ -102,28 +104,28 @@ func globItems(host string, category string) (Items, error) {
 		}
 		if contains(extensions, filepath.Ext(path)) {
 			escapedPath := filepath.ToSlash(escapeFilename(path))
-			enclosure := Enclosure{
+			enclosure := enclosure{
 				Type:   videoMimes[filepath.Ext(path)],
 				Length: stat.Size(),
-				Url:    host + "/" + escapedPath,
+				URL:    host + "/" + escapedPath,
 			}
 			baseName := baseFilename(stat.Name())
-			item := Item{
+			i := item{
 				Title:       baseName,
 				Description: baseName,
 				Enclosure:   enclosure,
 				PubDate:     stat.ModTime().Format(rfc822),
 				ModTime:     stat.ModTime(),
 			}
-			items = append(items, item)
+			itemList = append(itemList, i)
 		}
 		return nil
 	})
 
 	if err != nil {
-		return items, err
+		return itemList, err
 	}
 
-	sort.Sort(items)
-	return items, nil
+	sort.Sort(itemList)
+	return itemList, nil
 }

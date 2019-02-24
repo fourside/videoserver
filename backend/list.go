@@ -30,7 +30,7 @@ func list(w http.ResponseWriter, r *http.Request) {
 	offset := r.URL.Query()["offset"]
 	videos = slice(videos, offset)
 
-	res, err := json.Marshal(ListResponse{
+	res, err := json.Marshal(listResponse{
 		VideoList: videos,
 		Total:     total,
 	})
@@ -40,11 +40,13 @@ func list(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	w.Header().Set("Content-Type", "application/json")
-	w.Write(res)
+	if _, err := w.Write(res); err != nil {
+		http.Error(w, err.Error(), http.StatusBadRequest)
+	}
 }
 
-func glob(host string, category string) (Videos, error) {
-	var videos Videos
+func glob(host string, category string) (videos, error) {
+	var vs videos
 	searchPath := fmt.Sprintf("%s/%s/", publicDir, category)
 	err := filepath.Walk(searchPath, func(path string, stat os.FileInfo, err error) error {
 		if stat.IsDir() {
@@ -56,46 +58,46 @@ func glob(host string, category string) (Videos, error) {
 			if category == "" {
 				cat = filepath.Base(filepath.Dir(path))
 			}
-			video := Video{
+			v := video{
 				Title:    baseFilename(path),
 				Image:    host + "/" + filepath.ToSlash(escapeFilename(toJpegPath(path))),
-				Url:      host + "/" + escapedPath,
+				URL:      host + "/" + escapedPath,
 				Category: cat,
 				Bytes:    stat.Size(),
 				Mtime:    stat.ModTime().Format("2006-01-02 15:03:04 -0700"),
 				ModTime:  stat.ModTime(),
 			}
-			videos = append(videos, video)
+			vs = append(vs, v)
 		}
 		return nil
 	})
 
 	if err != nil {
-		return videos, err
+		return vs, err
 	}
 
-	sort.Sort(videos)
-	return videos, nil
+	sort.Sort(vs)
+	return vs, nil
 }
 
-func slice(videos Videos, offsetParam []string) Videos {
+func slice(vs videos, offsetParam []string) videos {
 	offset := 0
 	if len(offsetParam) > 0 {
 		offset, _ = strconv.Atoi(offsetParam[0])
 	}
 
-	size := len(videos)
+	size := len(vs)
 	begin := offset * itemPerPage
 	if begin > size {
-		return Videos{}
+		return videos{}
 	}
 
 	end := begin + itemPerPage
 	if end > size {
-		return videos[begin:]
+		return vs[begin:]
 	}
 
-	return videos[begin:end]
+	return vs[begin:end]
 }
 
 func toJpegPath(path string) string {
@@ -106,29 +108,29 @@ func toJpegPath(path string) string {
 	return jpegPath
 }
 
-func (v Videos) Len() int {
+func (v videos) Len() int {
 	return len(v)
 }
 
-func (v Videos) Swap(i, j int) {
+func (v videos) Swap(i, j int) {
 	v[i], v[j] = v[j], v[i]
 }
 
-func (v Videos) Less(i, j int) bool {
+func (v videos) Less(i, j int) bool {
 	return v[i].ModTime.After(v[j].ModTime)
 }
 
-type Videos []Video
-type Video struct {
+type videos []video
+type video struct {
 	Title    string    `json:"title"`
 	Image    string    `json:"image"`
-	Url      string    `json:"url"`
+	URL      string    `json:"url"`
 	Category string    `json:"category"`
 	Bytes    int64     `json:"bytes"`
 	Mtime    string    `json:"mtime"`
 	ModTime  time.Time `json:"-"`
 }
-type ListResponse struct {
-	VideoList Videos `json:"videos"`
+type listResponse struct {
+	VideoList videos `json:"videos"`
 	Total     int    `json:"total"`
 }

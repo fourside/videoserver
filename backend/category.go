@@ -14,7 +14,7 @@ func category(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}
-	res, err := json.Marshal(CategoryResponse{
+	res, err := json.Marshal(categoryResponse{
 		Category: category,
 	})
 	if err != nil {
@@ -23,7 +23,9 @@ func category(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	w.Header().Set("Content-Type", "application/json")
-	w.Write(res)
+	if _, err := w.Write(res); err != nil {
+		http.Error(w, err.Error(), http.StatusBadRequest)
+	}
 }
 
 func globCategory() ([]string, error) {
@@ -40,6 +42,6 @@ func globCategory() ([]string, error) {
 	return category, nil
 }
 
-type CategoryResponse struct {
+type categoryResponse struct {
 	Category []string `json:"categories"`
 }
