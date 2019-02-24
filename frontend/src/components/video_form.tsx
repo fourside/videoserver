@@ -32,12 +32,12 @@ export default class VideoForm extends React.Component<VideoFormProps, VideoForm
     };
   }
 
-  componentDidMount() {
+  componentDidMount() :void {
     this.urlInput.focus();
     this.getCategory();
   }
 
-  getCategory() {
+  getCategory() :void {
     new Client().getCategory()
       .then((json) => {
         this.setState({
@@ -46,7 +46,7 @@ export default class VideoForm extends React.Component<VideoFormProps, VideoForm
       });
   }
 
-  handleSubmit(e) {
+  handleSubmit(e :any) :void {
     e.preventDefault();
     if (this.state.isValid) {
       new Client().postUrl({
@@ -62,7 +62,7 @@ export default class VideoForm extends React.Component<VideoFormProps, VideoForm
     }
   }
 
-  handleUrlChange(e) {
+  handleUrlChange(e :any) :void {
     const url = e.target.value;
     this.setState({
       url: url,
@@ -70,20 +70,20 @@ export default class VideoForm extends React.Component<VideoFormProps, VideoForm
     })
   }
 
-  handleCategoryChange(value) {
+  handleCategoryChange(value :string) :void {
     this.setState({
       category: value,
       isValid: !!(this.state.url) && !!(value)
     })
   }
 
-  checkSubtitle(e) {
+  checkSubtitle(e :any) :void {
     this.setState({
       subtitle: e.target.checked
     });
   }
 
-  validate() {
+  validate() :void {
     this.setState({
       isValid: !!(this.state.url) && !!(this.state.category)
     })

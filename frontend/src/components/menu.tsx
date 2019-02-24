@@ -21,11 +21,11 @@ export default class Menu extends React.Component<{}, MenuState> {
     document.addEventListener('click', this.handleExceptMenuClick.bind(this));
   }
 
-  componentWillUnmount() {
+  componentWillUnmount() :void {
     document.removeEventListener('click', this.handleExceptMenuClick.bind(this));
   }
 
-  handleMenuClick(e) {
+  handleMenuClick(e :any) :void {
     this.button = e.target;
     const active = this.state.active === "" ? "is-active" : "";
     this.setState({
@@ -33,7 +33,7 @@ export default class Menu extends React.Component<{}, MenuState> {
     });
   }
 
-  handleExceptMenuClick(e) {
+  handleExceptMenuClick(e :any) :void {
     if (this.state.active === "is-active" && this.button !== e.target) {
       this.setState({
         active: ""
@@ -41,14 +41,14 @@ export default class Menu extends React.Component<{}, MenuState> {
     }
   }
 
-  toggleModal() {
-    this.setState((prev) => {
+  toggleModal() :void {
+    this.setState((prev :MenuState) => {
       const newState = !prev.isModalOpen;
       return { isModalOpen: newState };
     });
   }
 
-  notifyHttp() {
+  notifyHttp() :void {
     this.setState({
       isNotified: true
     });

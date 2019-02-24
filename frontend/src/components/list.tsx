@@ -33,24 +33,24 @@ export default class List extends React.Component<RouterProps, ListState> {
     }
   }
 
-  componentDidMount() {
+  componentDidMount() :void {
     const { category } = this.props.match.params;
     const offset = this.state.currentPage;
     this.getCategory();
     this.getList(category, offset);
   }
 
-  componentWillReceiveProps(nextProps) {
+  componentWillReceiveProps(nextProps :RouterProps) :void {
     const { category } = nextProps.match.params;
     const offset = this.state.currentPage;
     this.getList(category, offset);
   }
 
-  shouldComponentUpdate(nextProps, nextState) {
+  shouldComponentUpdate(nextProps :RouterProps, nextState :ListState) :boolean {
     return this.state.videos !== nextState.videos;
   }
 
-  getList(category, offset) {
+  getList(category :string, offset :number) :void {
     new Client().getList(category, offset)
       .then(json => {
         this.setState({
@@ -60,7 +60,7 @@ export default class List extends React.Component<RouterProps, ListState> {
       });
   }
 
-  getCategory() {
+  getCategory() :void {
     new Client().getCategory()
       .then((json) => {
         this.setState({
@@ -69,11 +69,11 @@ export default class List extends React.Component<RouterProps, ListState> {
       });
   }
 
-  handleCategorySelect(e) {
+  handleCategorySelect(e :any) :void {
     this.props.history.push(`/list/${e.target.value}`)
   }
 
-  handlePagerClick(i) {
+  handlePagerClick(i :number) :void {
     this.setState({
       currentPage: i
     });
