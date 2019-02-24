@@ -21,7 +21,7 @@ interface RouterProps {
   history: Array<string>
 }
 
-class List extends React.Component<RouterProps, ListState> {
+export default class List extends React.Component<RouterProps, ListState> {
 
   constructor(props) {
     super(props);
@@ -98,8 +98,6 @@ class List extends React.Component<RouterProps, ListState> {
     );
   }
 }
-
-export default List;
 
 const SubNav = styled.nav`
   display: flex;

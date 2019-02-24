@@ -3,18 +3,14 @@ import styled from 'styled-components';
 
 import Menu from './menu';
 
-export default class Header extends React.Component<{}, {}> {
-  render() {
-    return (
-      <HeaderWrapper>
-        <h1 className="title">video server</h1>
-        <MenuWrapper>
-          <Menu />
-        </MenuWrapper>
-      </HeaderWrapper>
-    );
-  }
-}
+const Header = () => (
+  <HeaderWrapper>
+    <h1 className="title">video server</h1>
+    <MenuWrapper>
+      <Menu />
+    </MenuWrapper>
+  </HeaderWrapper>
+);
 
 const HeaderWrapper = styled.header`
   display: flex;
@@ -24,3 +20,4 @@ const MenuWrapper = styled.div`
   margin-left: auto;
 `;
 
+export default Header;

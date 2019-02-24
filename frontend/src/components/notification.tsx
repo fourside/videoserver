@@ -4,16 +4,11 @@ interface NotificationProps {
   message: string
   isShown: boolean
 }
-export default class Notification extends React.Component<NotificationProps, {}> {
+const Notification = ({message, isShown} :NotificationProps) => (
+  <div className={`notification is-success http-notify ${isShown ? "is-shown" : "is-hidden"}`} >
+    <button className="delete"></button>
+    {message}
+  </div>
+);
 
-  render() {
-    return (
-      <div className={`notification is-success http-notify ${this.props.isShown ? "is-shown" : "is-hidden"}`} >
-        <button className="delete"></button>
-        {this.props.message}
-      </div>
-    );
-  }
-
-}
-
+export default Notification;

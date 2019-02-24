@@ -3,7 +3,7 @@ import * as React from 'react';
 interface SelectProps {
   current: string
   categories: Array<string>
-  onChange: () => void
+  onChange: (e) => void
 }
 const select = ({current, categories, onChange} : SelectProps) => (
   <div className="control has-icons-left">
