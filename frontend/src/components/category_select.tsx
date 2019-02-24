@@ -5,7 +5,7 @@ interface SelectProps {
   categories: Array<string>
   onChange: (e) => void
 }
-const select = ({current, categories, onChange} : SelectProps) => (
+const CategorySelect = ({current, categories, onChange} : SelectProps) => (
   <div className="control has-icons-left">
     <div className="select is-small">
       <select onChange={onChange} value={current}>
@@ -23,4 +23,4 @@ const select = ({current, categories, onChange} : SelectProps) => (
   </div>
 );
 
-export default select;
+export default CategorySelect;

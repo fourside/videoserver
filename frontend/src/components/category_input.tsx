@@ -11,55 +11,52 @@ interface CategoryInputProps {
   item: Array<string>
 }
 
-const CategoryInput = ({className, name, placeholder, onChange, onBlur, item} : CategoryInputProps) => {
-
-  return (
-    <Downshift onChange={onChange} onInputValueChange={onChange}>
-      {({
-        getInputProps,
-        getItemProps,
-        isOpen,
-        inputValue,
-        highlightedIndex,
-        selectedItem,
-      }) => (
-        <div>
-          <input {...getInputProps()}
-            className={className}
-            name={name}
-            onBlur={onBlur}
-            placeholder={placeholder}
-          />
-          { isOpen ? (
-            <div className="menu">
-              <DownshiftUl className="menu-list">
-                {item
-                  .filter(item => !inputValue || item.includes(inputValue))
-                  .map((item, index) => (
-                    <DownshiftLi
-                      key={index}
-                      {...getItemProps({
-                        key: index,
-                        index,
-                        item,
-                        style: {
-                          backgroundColor:
-                            highlightedIndex === index ? 'lightgray' : 'white',
-                            fontWeight: selectedItem === item ? 'bold' : 'normal',
-                        },
-                      })}
-                    >
-                      {item}
-                    </DownshiftLi>
-                  ))}
-              </DownshiftUl>
-            </div>
-          ) : null}
-        </div>
-      )}
-    </Downshift>
-  );
-}
+const CategoryInput = ({className, name, placeholder, onChange, onBlur, item} : CategoryInputProps) => (
+  <Downshift onChange={onChange} onInputValueChange={onChange}>
+    {({
+      getInputProps,
+      getItemProps,
+      isOpen,
+      inputValue,
+      highlightedIndex,
+      selectedItem,
+    }) => (
+      <div>
+        <input {...getInputProps()}
+          className={className}
+          name={name}
+          onBlur={onBlur}
+          placeholder={placeholder}
+        />
+        { isOpen ? (
+          <div className="menu">
+            <DownshiftUl className="menu-list">
+              {item
+                .filter(item => !inputValue || item.includes(inputValue))
+                .map((item, index) => (
+                  <DownshiftLi
+                    key={index}
+                    {...getItemProps({
+                      key: index,
+                      index,
+                      item,
+                      style: {
+                        backgroundColor:
+                          highlightedIndex === index ? 'lightgray' : 'white',
+                          fontWeight: selectedItem === item ? 'bold' : 'normal',
+                      },
+                    })}
+                  >
+                    {item}
+                  </DownshiftLi>
+                ))}
+            </DownshiftUl>
+          </div>
+        ) : null}
+      </div>
+    )}
+  </Downshift>
+);
 
 
 const DownshiftUl = styled.ul`
