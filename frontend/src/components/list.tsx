@@ -1,4 +1,5 @@
 import * as React from 'react';
+import { useState, useEffect } from 'react';
 import styled from 'styled-components';
 
 import Client from '../shared/client';
@@ -6,12 +7,11 @@ import {Item, Video} from './item';
 import Pager from './pager';
 import CategorySelect from './category_select';
 
-interface ListState {
+interface ListResponse {
   videos : Array<Video>
-  category: Array<string>
-  currentPage: number
   total: number
 }
+
 interface RouterProps {
   match: {
     params: {
@@ -21,83 +21,69 @@ interface RouterProps {
   history: Array<string>
 }
 
-export default class List extends React.Component<RouterProps, ListState> {
+const List = (props :RouterProps) => {
+  const [listRes, setListRes] = useState<ListResponse>({ videos: [], total: 0 });
+  const [category, setCategory] = useState<Array<string>>([]);
+  const [current, setCurrent] = useState<number>(0);
 
-  constructor(props) {
-    super(props);
-    this.state = {
-      videos: [],
-      category: [],
-      currentPage: 0,
-      total: 0
-    }
-  }
+  const client = new Client();
 
-  componentDidMount() :void {
-    const { category } = this.props.match.params;
-    const offset = this.state.currentPage;
-    this.getCategory();
-    this.getList(category, offset);
-  }
-
-  componentWillReceiveProps(nextProps :RouterProps) :void {
-    const { category } = nextProps.match.params;
-    const offset = this.state.currentPage;
-    this.getList(category, offset);
-  }
-
-  shouldComponentUpdate(nextProps :RouterProps, nextState :ListState) :boolean {
-    return this.state.videos !== nextState.videos;
-  }
-
-  getList(category :string, offset :number) :void {
-    new Client().getList(category, offset)
+  const getList = (category :string, offset :number) :void => {
+    client.getList(category, offset)
       .then(json => {
-        this.setState({
-          videos: json["videos"],
-          total: json["total"]
-        })
-      });
-  }
+        setListRes({videos: json["videos"], total: json["total"]});
+      })
+  };
 
-  getCategory() :void {
-    new Client().getCategory()
+  const getCategory = () :void => {
+    client.getCategory()
       .then((json) => {
-        this.setState({
-          category: json
-        })
+        setCategory(json);
       });
   }
 
-  handleCategorySelect(e :any) :void {
-    this.props.history.push(`/list/${e.target.value}`)
+  const handlePagerClick = (i :number) :void => {
+    setCurrent(i);
+    const { category } = props.match.params;
+    getList(category, i);
   }
 
-  handlePagerClick(i :number) :void {
-    this.setState({
-      currentPage: i
-    });
-    const { category } = this.props.match.params;
-    this.getList(category, i);
+  const handleCategorySelect = (e :any) :void => {
+    props.history.push(`/list/${e.target.value}`);
   }
 
-  render() {
-    return (
-      <div>
-        <SubNav>
-          <Pager total={this.state.total} currentPage={this.state.currentPage} onChange={(i) => this.handlePagerClick(i)} />
-          <SideSelect>
-            <CategorySelect current={this.props.match.params.category} onChange={(e) => this.handleCategorySelect(e)} categories={this.state.category} />
-          </SideSelect>
-        </SubNav>
-        {this.state.videos.map((video) => (
-          <Item video={video} key={video.title}/>
-        ))}
-        <Pager total={this.state.total} currentPage={this.state.currentPage} onChange={(i) => this.handlePagerClick(i)} />
-      </div>
-    );
-  }
+  useEffect(() => {
+    const { category } = props.match.params;
+    const offset = current;
+    getList(category, offset);
+  }, [...listRes.videos])
+
+  useEffect(() => {
+    getCategory();
+  }, [...category])
+
+  return (
+    <>
+      <SubNav>
+        <Pager total={listRes.total} currentPage={current} onChange={(i) => handlePagerClick(i)} />
+        <SideSelect>
+          <CategorySelect 
+            current={props.match.params.category}
+            onChange={(e) => handleCategorySelect(e)}
+            categories={category} />
+        </SideSelect>
+      </SubNav>
+
+      {listRes.videos.map((video) => (
+        <Item video={video} key={video.title}/>
+      ))}
+
+      <Pager total={listRes.total} currentPage={current} onChange={(i) => handlePagerClick(i)} />
+    </>
+  );
 }
+
+export default List;
 
 const SubNav = styled.nav`
   display: flex;
