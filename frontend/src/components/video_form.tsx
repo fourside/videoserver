@@ -1,143 +1,130 @@
 import * as React from 'react';
+import { useState, useEffect } from 'react';
 import styled from 'styled-components';
 
 import CategoryInput from './category_input';
+import useCategory from '../hooks/use_category';
 import Client from '../shared/client';
 
-const CheckboxText = styled.span`
-  padding-left: 5px;
-`;
 interface VideoFormProps {
   close: () => void
   notifyHttp: () => void
 }
-interface VideoFormState {
+interface FormValues {
   url: string
   category: string
   subtitle: boolean
-  isValid: boolean
-  categories: Array<string>
 }
-export default class VideoForm extends React.Component<VideoFormProps, VideoFormState> {
+const VideoForm = (props :VideoFormProps) => {
+  let urlInput :HTMLElement;
+  const [formValues, setFormValues] = useState<FormValues>({
+    url: "",
+    category: "",
+    subtitle: false
+  });
+  const [isValid, setValid] = useState<boolean>(false);
+  const categories = useCategory();
 
-  urlInput;
-  constructor(props) {
-    super(props);
-    this.state = {
-      url: "",
-      category: "",
-      subtitle: false,
-      isValid: false,
-      categories: []
-    };
-  }
+  useEffect(() => {
+    urlInput.focus();
+  }, []);
 
-  componentDidMount() :void {
-    this.urlInput.focus();
-    this.getCategory();
-  }
-
-  getCategory() :void {
-    new Client().getCategory()
-      .then((json) => {
-        this.setState({
-          categories: json
-        })
-      });
-  }
-
-  handleSubmit(e :any) :void {
+  const handleSubmit = (e :any) :void => {
     e.preventDefault();
-    if (this.state.isValid) {
+    if (isValid) {
       new Client().postUrl({
-        url: this.state.url,
-        category: this.state.category,
-        subtitle: this.state.subtitle
+        url: formValues.url,
+        category: formValues.category,
+        subtitle: formValues.subtitle
       }).then(() => {
-        this.props.close();
-        this.props.notifyHttp();
+        props.close();
+        props.notifyHttp();
       }).catch(err => {
         console.log(err);
       });
     }
   }
 
-  handleUrlChange(e :any) :void {
-    const url = e.target.value;
-    this.setState({
-      url: url,
-      isValid: !!(url) && !!(this.state.category)
-    })
-  }
-
-  handleCategoryChange(value :string) :void {
-    this.setState({
-      category: value,
-      isValid: !!(this.state.url) && !!(value)
-    })
-  }
-
-  checkSubtitle(e :any) :void {
-    this.setState({
-      subtitle: e.target.checked
+  const handleUrlChange = (e :any) :void => {
+    setFormValues({
+      ...formValues,
+      url: e.target.value
     });
+    validate();
+  };
+
+  const handleCategoryChange = (e :string) :void => {
+    setFormValues({
+      ...formValues,
+      category: e
+    });
+    validate();
+  };
+
+  const handleSubtitleChange = (e :any) :void => {
+    setFormValues({
+      ...formValues,
+      category: e.target.checked
+    });
+    validate();
+  };
+
+  const validate = () :void => {
+    setValid(!!(formValues.url) && !!(formValues.category));
   }
 
-  validate() :void {
-    this.setState({
-      isValid: !!(this.state.url) && !!(this.state.category)
-    })
-  }
-
-  render() {
-    return (
-      <form onSubmit={(e) => this.handleSubmit(e)}>
-        <div className="field">
-          <label className="label">Video URL</label>
-          <div className="control has-icons-left has-icons-right">
-            <input className="input" name="url" type="text" placeholder="URL input"
-              onChange={(e) => this.handleUrlChange(e)}
-              onBlur={() => this.validate()}
-              ref={input => {this.urlInput = input}}
-            />
-            <span className="icon is-small is-left">
-              <i className="fas fa-download"></i>
-            </span>
-          </div>
+  return (
+    <form onSubmit={handleSubmit}>
+      <div className="field">
+        <label className="label">Video URL</label>
+        <div className="control has-icons-left has-icons-right">
+          <input className="input" name="url" type="text" placeholder="URL input"
+            onChange={handleUrlChange}
+            onBlur={validate}
+            ref={input => {urlInput = input}}
+          />
+          <span className="icon is-small is-left">
+            <i className="fas fa-download"></i>
+          </span>
         </div>
+      </div>
 
-        <div className="field">
-          <label className="label">Category</label>
-          <div className="control has-icons-left has-icons-right">
-            <CategoryInput className="input" name="category" placeholder="Category input"
-              onChange={this.handleCategoryChange.bind(this) }
-              onBlur={() => this.validate()}
-              item={this.state.categories}
-            />
-            <span className="icon is-small is-left">
-              <i className="fas fa-tag"></i>
-            </span>
-          </div>
+      <div className="field">
+        <label className="label">Category</label>
+        <div className="control has-icons-left has-icons-right">
+          <CategoryInput className="input" name="category" placeholder="Category input"
+            onChange={handleCategoryChange}
+            onBlur={validate}
+            item={categories}
+          />
+          <span className="icon is-small is-left">
+            <i className="fas fa-tag"></i>
+          </span>
         </div>
+      </div>
 
-        <div className="field">
-          <label className="checkbox">
-            <div className="control">
-              <input type="checkbox" name="subtitle" onChange={(e) => this.checkSubtitle(e)} />
-              <CheckboxText >use subtitle</CheckboxText>
-            </div>
-          </label>
-        </div>
-
-        <div className="field is-grouped">
+      <div className="field">
+        <label className="checkbox">
           <div className="control">
-            <button className="button is-link" disabled={!this.state.isValid} >Submit</button>
+            <input type="checkbox" name="subtitle" onChange={handleSubtitleChange} />
+            <CheckboxText >use subtitle</CheckboxText>
           </div>
-          <div className="control">
-            <button className="button is-link" onClick={this.props.close}>Cancel</button>
-          </div>
+        </label>
+      </div>
+
+      <div className="field is-grouped">
+        <div className="control">
+          <button className="button is-link" disabled={!isValid} >Submit</button>
         </div>
-      </form>
-    );
-  }
-}
+        <div className="control">
+          <button className="button is-link" onClick={props.close}>Cancel</button>
+        </div>
+      </div>
+    </form>
+  );
+};
+export default VideoForm;
+
+const CheckboxText = styled.span`
+  padding-left: 5px;
+`;

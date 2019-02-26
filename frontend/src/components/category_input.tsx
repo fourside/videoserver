@@ -6,7 +6,7 @@ interface CategoryInputProps {
   className: string
   name: string
   placeholder: string
-  onChange: () => void
+  onChange: (e) => void
   onBlur: () => void
   item: Array<string>
 }
