@@ -1,22 +1,19 @@
 import * as React from 'react';
 import { NavLink } from 'react-router-dom';
 
-import Modal from './modal';
-import Notification from './notification';
-
+interface MenuProps {
+  toggleModal: () => void
+}
 interface MenuState {
   active: "" | "is-active"
-  isModalOpen: boolean
-  isNotified: boolean
 }
-export default class Menu extends React.Component<{}, MenuState> {
+
+export default class Menu extends React.Component<MenuProps, MenuState> {
   button: HTMLElement;
   constructor(props) {
     super(props)
     this.state = {
-      active: "",
-      isModalOpen: false,
-      isNotified: false
+      active: ""
     };
     document.addEventListener('click', this.handleExceptMenuClick.bind(this));
   }
@@ -41,24 +38,6 @@ export default class Menu extends React.Component<{}, MenuState> {
     }
   }
 
-  toggleModal() :void {
-    this.setState((prev :MenuState) => {
-      const newState = !prev.isModalOpen;
-      return { isModalOpen: newState };
-    });
-  }
-
-  notifyHttp() :void {
-    this.setState({
-      isNotified: true
-    });
-    setTimeout(() => {
-      this.setState({
-        isNotified: false
-      });
-    }, 2000);
-  }
-
   render() {
     return (
       <div className={this.state.active + " dropdown is-right"}>
@@ -75,18 +54,11 @@ export default class Menu extends React.Component<{}, MenuState> {
         <div className="dropdown-menu" id="dropdown-menu" role="menu">
           <div className="dropdown-content">
             <NavLink className="dropdown-item" exact to="/">Home</NavLink>
-            <a className="dropdown-item" onClick={() => this.toggleModal()} >Form</a>
+            <a className="dropdown-item" onClick={() => this.props.toggleModal()} >Form</a>
             <NavLink className="dropdown-item" exact to="/list">List</NavLink>
             <a className="dropdown-item" href="/feed">RSS</a>
           </div>
         </div>
-
-        <Notification message="OK!" isShown={this.state.isNotified}/>
-        <Modal
-          closeModal={() => this.toggleModal()}
-          notifyHttp={() => this.notifyHttp()}
-          isOpen={this.state.isModalOpen}
-        />
 
       </div>
     );
