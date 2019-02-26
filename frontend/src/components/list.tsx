@@ -24,12 +24,13 @@ interface RouterProps {
 const useList = (category :string, offset :number) :ListResponse => {
   const [listResponse, setListResponse] = useState<ListResponse>({ videos: [], total: 0 });
 
+  const getList = async () => {
+    const json = await new Client().getList(category, offset);
+    setListResponse({videos: json["videos"], total: json["total"]});
+  }
   useEffect(() => {
-    new Client().getList(category, offset)
-      .then(json => {
-        setListResponse({videos: json["videos"], total: json["total"]});
-    });
-  }, [listResponse.videos])
+    getList();
+  }, [category, offset])
 
   return listResponse;
 };
@@ -37,12 +38,14 @@ const useList = (category :string, offset :number) :ListResponse => {
 const useCategory = () => {
   const [category, setCategory] = useState<Array<string>>([""]);
 
+  const getCategory = async () => {
+    const json = await new Client().getCategory();
+    setCategory(json);
+  }
+
   useEffect(() => {
-    new Client().getCategory()
-      .then(json => {
-        setCategory(json);
-    });
-  }, [category])
+    getCategory()
+  }, [])
 
   return category;
 };
@@ -51,22 +54,17 @@ const List = (props :RouterProps) => {
   const [current, setCurrent] = useState<number>(0);
 
   const category = useCategory();
-  let listRes = useList(props.match.params.category, current);
-
-  const handlePagerClick = (i :number) :void => {
-    setCurrent(i);
-    const { category } = props.match.params;
-    listRes = useList(category, i);
-  }
+  const listRes = useList(props.match.params.category, current);
 
   const handleCategorySelect = (e :any) :void => {
+    setCurrent(0);
     props.history.push(`/list/${e.target.value}`);
   }
 
   return (
     <>
       <SubNav>
-        <Pager total={listRes.total} currentPage={current} onChange={(i) => handlePagerClick(i)} />
+        <Pager total={listRes.total} currentPage={current} onChange={(i) => setCurrent(i) } />
         <SideSelect>
           <CategorySelect 
             current={props.match.params.category}
@@ -79,7 +77,7 @@ const List = (props :RouterProps) => {
         <Item video={video} key={video.title}/>
       ))}
 
-      <Pager total={listRes.total} currentPage={current} onChange={(i) => handlePagerClick(i)} />
+      <Pager total={listRes.total} currentPage={current} onChange={(i) => setCurrent(i) } />
     </>
   );
 }
