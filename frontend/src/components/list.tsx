@@ -29,20 +29,20 @@ const useList = (category :string, offset :number) :ListResponse => {
       .then(json => {
         setListResponse({videos: json["videos"], total: json["total"]});
     });
-  }, [])
+  }, [listResponse.videos])
 
   return listResponse;
 };
 
 const useCategory = () => {
-  const [category, setCategory] = useState<Array<string>>([]);
+  const [category, setCategory] = useState<Array<string>>([""]);
 
   useEffect(() => {
     new Client().getCategory()
       .then(json => {
         setCategory(json);
     });
-  }, [])
+  }, [category])
 
   return category;
 };
