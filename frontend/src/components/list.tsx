@@ -6,6 +6,7 @@ import Client from '../shared/client';
 import {Item, Video} from './item';
 import Pager from './pager';
 import CategorySelect from './category_select';
+import useCategory from '../hooks/use_category';
 
 interface ListResponse {
   videos : Array<Video>
@@ -33,21 +34,6 @@ const useList = (category :string, offset :number) :ListResponse => {
   }, [category, offset])
 
   return listResponse;
-};
-
-const useCategory = () => {
-  const [category, setCategory] = useState<Array<string>>([""]);
-
-  const getCategory = async () => {
-    const json = await new Client().getCategory();
-    setCategory(json);
-  }
-
-  useEffect(() => {
-    getCategory()
-  }, [])
-
-  return category;
 };
 
 const List = (props :RouterProps) => {
