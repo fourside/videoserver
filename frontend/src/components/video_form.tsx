@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { useState, useEffect } from 'react';
+import { useState, useLayoutEffect } from 'react';
 import styled from 'styled-components';
 
 import CategoryInput from './category_input';
@@ -16,7 +16,7 @@ interface FormValues {
   subtitle: boolean
 }
 const VideoForm = (props :VideoFormProps) => {
-  let urlInput :HTMLElement;
+  let urlInput :HTMLElement | null;
   const [formValues, setFormValues] = useState<FormValues>({
     url: "",
     category: "",
@@ -25,8 +25,10 @@ const VideoForm = (props :VideoFormProps) => {
   const [isValid, setValid] = useState<boolean>(false);
   const categories = useCategory();
 
-  useEffect(() => {
-    urlInput.focus();
+  useLayoutEffect(() => {
+    if (urlInput) {
+      urlInput.focus();
+    }
   }, []);
 
   const handleSubmit = (e :any) :void => {
