@@ -21,46 +21,47 @@ interface RouterProps {
   history: Array<string>
 }
 
-const List = (props :RouterProps) => {
-  const [listRes, setListRes] = useState<ListResponse>({ videos: [], total: 0 });
+const useList = (category :string, offset :number) :ListResponse => {
+  const [listResponse, setListResponse] = useState<ListResponse>({ videos: [], total: 0 });
+
+  useEffect(() => {
+    new Client().getList(category, offset)
+      .then(json => {
+        setListResponse({videos: json["videos"], total: json["total"]});
+    });
+  }, [])
+
+  return listResponse;
+};
+
+const useCategory = () => {
   const [category, setCategory] = useState<Array<string>>([]);
+
+  useEffect(() => {
+    new Client().getCategory()
+      .then(json => {
+        setCategory(json);
+    });
+  }, [])
+
+  return category;
+};
+
+const List = (props :RouterProps) => {
   const [current, setCurrent] = useState<number>(0);
 
-  const client = new Client();
-
-  const getList = (category :string, offset :number) :void => {
-    client.getList(category, offset)
-      .then(json => {
-        setListRes({videos: json["videos"], total: json["total"]});
-      })
-  };
-
-  const getCategory = () :void => {
-    client.getCategory()
-      .then((json) => {
-        setCategory(json);
-      });
-  }
+  const category = useCategory();
+  let listRes = useList(props.match.params.category, current);
 
   const handlePagerClick = (i :number) :void => {
     setCurrent(i);
     const { category } = props.match.params;
-    getList(category, i);
+    listRes = useList(category, i);
   }
 
   const handleCategorySelect = (e :any) :void => {
     props.history.push(`/list/${e.target.value}`);
   }
-
-  useEffect(() => {
-    const { category } = props.match.params;
-    const offset = current;
-    getList(category, offset);
-  }, [...listRes.videos])
-
-  useEffect(() => {
-    getCategory();
-  }, [...category])
 
   return (
     <>
