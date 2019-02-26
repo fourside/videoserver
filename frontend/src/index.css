@@ -11,7 +11,7 @@ main {
 .http-notify {
   position: absolute;
   right:calc(50% - 100px);
-  top: 15%;
+  top: 10%;
   width: 200px;
 }
 .is-hidden {
