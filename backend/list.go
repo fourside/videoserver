@@ -46,7 +46,7 @@ func list(w http.ResponseWriter, r *http.Request) {
 }
 
 func glob(host string, category string) (videos, error) {
-	var vs videos
+	var vs = videos{}
 	searchPath := fmt.Sprintf("%s/%s/", publicDir, category)
 	err := filepath.Walk(searchPath, func(path string, stat os.FileInfo, err error) error {
 		if stat.IsDir() {

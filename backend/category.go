@@ -33,7 +33,7 @@ func globCategory() ([]string, error) {
 	if err != nil {
 		return nil, err
 	}
-	var category []string
+	var category = []string{}
 	for _, catDir := range catDirs {
 		base := filepath.Base(catDir)
 		category = append(category, base)
