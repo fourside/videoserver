@@ -5,11 +5,12 @@ import styled from 'styled-components';
 import Client from '../shared/client';
 import {Item, Video} from './item';
 import Pager from './pager';
+import Loading from './loading';
 import CategorySelect from './category_select';
 import useCategory from '../hooks/use_category';
 
 interface ListResponse {
-  videos : Array<Video>
+  videos? : Array<Video>
   total: number
 }
 
@@ -23,7 +24,7 @@ interface RouterProps {
 }
 
 const useList = (category :string, offset :number) :ListResponse => {
-  const [listResponse, setListResponse] = useState<ListResponse>({ videos: [], total: 0 });
+  const [listResponse, setListResponse] = useState<ListResponse>({ videos: undefined, total: 0 });
 
   const getList = async () => {
     const json = await new Client().getList(category, offset);
@@ -45,6 +46,13 @@ const List = (props :RouterProps) => {
   const handleCategorySelect = (e :any) :void => {
     setCurrent(0);
     props.history.push(`/list/${e.target.value}`);
+  }
+
+  if (listRes.videos === undefined) {
+    return (<Loading />);
+  }
+  if (listRes.videos.length === 0) {
+    return (<ZeroHit />);
   }
 
   return (
@@ -70,6 +78,12 @@ const List = (props :RouterProps) => {
 
 export default List;
 
+const ZeroHit = () => (
+  <div className="zero-hit notification is-info">
+    <p>There is no video. Add a video in the form.</p>
+  </div>
+);
+
 const SubNav = styled.nav`
   display: flex;
 `;
@@ -78,3 +92,4 @@ const SideSelect = styled.div`
   margin-top: 0.5em;
   margin-bottom: 0.5em;
 `;
+
