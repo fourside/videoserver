@@ -1,17 +1,18 @@
 import * as React from 'react';
+import { useState, useEffect } from 'react';
 import styled from 'styled-components';
 
 import Client from '../shared/client';
 import {Item, Video} from './item';
 import Pager from './pager';
 import CategorySelect from './category_select';
+import useCategory from '../hooks/use_category';
 
-interface ListState {
+interface ListResponse {
   videos : Array<Video>
-  category: Array<string>
-  currentPage: number
   total: number
 }
+
 interface RouterProps {
   match: {
     params: {
@@ -21,83 +22,53 @@ interface RouterProps {
   history: Array<string>
 }
 
-export default class List extends React.Component<RouterProps, ListState> {
+const useList = (category :string, offset :number) :ListResponse => {
+  const [listResponse, setListResponse] = useState<ListResponse>({ videos: [], total: 0 });
 
-  constructor(props) {
-    super(props);
-    this.state = {
-      videos: [],
-      category: [],
-      currentPage: 0,
-      total: 0
-    }
+  const getList = async () => {
+    const json = await new Client().getList(category, offset);
+    setListResponse({videos: json["videos"], total: json["total"]});
+  }
+  useEffect(() => {
+    getList();
+  }, [category, offset])
+
+  return listResponse;
+};
+
+const List = (props :RouterProps) => {
+  const [current, setCurrent] = useState<number>(0);
+
+  const category = useCategory();
+  const listRes = useList(props.match.params.category, current);
+
+  const handleCategorySelect = (e :any) :void => {
+    setCurrent(0);
+    props.history.push(`/list/${e.target.value}`);
   }
 
-  componentDidMount() :void {
-    const { category } = this.props.match.params;
-    const offset = this.state.currentPage;
-    this.getCategory();
-    this.getList(category, offset);
-  }
+  return (
+    <>
+      <SubNav>
+        <Pager total={listRes.total} currentPage={current} onChange={(i) => setCurrent(i) } />
+        <SideSelect>
+          <CategorySelect 
+            current={props.match.params.category}
+            onChange={(e) => handleCategorySelect(e)}
+            categories={category} />
+        </SideSelect>
+      </SubNav>
 
-  componentWillReceiveProps(nextProps :RouterProps) :void {
-    const { category } = nextProps.match.params;
-    const offset = this.state.currentPage;
-    this.getList(category, offset);
-  }
+      {listRes.videos.map((video) => (
+        <Item video={video} key={video.title}/>
+      ))}
 
-  shouldComponentUpdate(nextProps :RouterProps, nextState :ListState) :boolean {
-    return this.state.videos !== nextState.videos;
-  }
-
-  getList(category :string, offset :number) :void {
-    new Client().getList(category, offset)
-      .then(json => {
-        this.setState({
-          videos: json["videos"],
-          total: json["total"]
-        })
-      });
-  }
-
-  getCategory() :void {
-    new Client().getCategory()
-      .then((json) => {
-        this.setState({
-          category: json
-        })
-      });
-  }
-
-  handleCategorySelect(e :any) :void {
-    this.props.history.push(`/list/${e.target.value}`)
-  }
-
-  handlePagerClick(i :number) :void {
-    this.setState({
-      currentPage: i
-    });
-    const { category } = this.props.match.params;
-    this.getList(category, i);
-  }
-
-  render() {
-    return (
-      <div>
-        <SubNav>
-          <Pager total={this.state.total} currentPage={this.state.currentPage} onChange={(i) => this.handlePagerClick(i)} />
-          <SideSelect>
-            <CategorySelect current={this.props.match.params.category} onChange={(e) => this.handleCategorySelect(e)} categories={this.state.category} />
-          </SideSelect>
-        </SubNav>
-        {this.state.videos.map((video) => (
-          <Item video={video} key={video.title}/>
-        ))}
-        <Pager total={this.state.total} currentPage={this.state.currentPage} onChange={(i) => this.handlePagerClick(i)} />
-      </div>
-    );
-  }
+      <Pager total={listRes.total} currentPage={current} onChange={(i) => setCurrent(i) } />
+    </>
+  );
 }
+
+export default List;
 
 const SubNav = styled.nav`
   display: flex;
