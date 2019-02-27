@@ -15,7 +15,7 @@ import (
 )
 
 const (
-	itemPerPage = 30
+	itemPerPage = 15
 )
 
 func list(w http.ResponseWriter, r *http.Request) {

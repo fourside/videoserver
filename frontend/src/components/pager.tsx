@@ -6,7 +6,7 @@ interface PagerProps {
   currentPage: number
   onChange: (e) => void
 }
-const itemPerPage = 30;
+const itemPerPage = 15;
 
 const Pager = ({total, currentPage, onChange}: PagerProps) => {
   const totalPage = Math.ceil(total / itemPerPage);
