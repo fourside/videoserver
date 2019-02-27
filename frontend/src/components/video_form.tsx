@@ -15,6 +15,10 @@ interface FormValues {
   category: string
   subtitle: boolean
 }
+interface ErrMessage {
+  message: string
+  isError: boolean
+}
 const VideoForm = (props :VideoFormProps) => {
   let urlInput :HTMLElement | null;
   const [formValues, setFormValues] = useState<FormValues>({
@@ -24,6 +28,7 @@ const VideoForm = (props :VideoFormProps) => {
   });
   const [isValid, setValid] = useState<boolean>(false);
   const categories = useCategory();
+  const [errMessage, setErrMessage] = useState<ErrMessage>({isError: false, message: ""});
 
   useLayoutEffect(() => {
     if (urlInput) {
@@ -33,19 +38,31 @@ const VideoForm = (props :VideoFormProps) => {
 
   const handleSubmit = (e :any) :void => {
     e.preventDefault();
-    if (isValid) {
-      new Client().postUrl({
-        url: formValues.url,
-        category: formValues.category,
-        subtitle: formValues.subtitle
-      }).then(() => {
+    if (!isValid) {
+      return;
+    }
+    clearErrorNotification();
+    new Client().postUrl(formValues).then((res) => {
+      if (res.ok) {
         props.close();
         props.notifyHttp();
-      }).catch(err => {
-        console.log(err);
-      });
-    }
+      } else {
+        res.text().then(text => {
+          notifyError(text);
+        })
+      }
+    }).catch(err => {
+      notifyError(err);
+    });
   }
+
+  const notifyError = (message :string) :void => {
+    setErrMessage({isError: true, message: message});
+  };
+
+  const clearErrorNotification = () :void => {
+    setErrMessage({isError: false, message: ""});
+  };
 
   const handleUrlChange = (e :any) :void => {
     setFormValues({
@@ -121,6 +138,12 @@ const VideoForm = (props :VideoFormProps) => {
         <div className="control">
           <button className="button is-link" onClick={props.close}>Cancel</button>
         </div>
+
+        <div className={`notification is-danger ${errMessage.isError ? "is-shown" : "is-hidden"}`} >
+          <button className="delete" onClick={clearErrorNotification}></button>
+          {errMessage.message}
+        </div>
+
       </div>
     </form>
   );
