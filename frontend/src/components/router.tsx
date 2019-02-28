@@ -1,12 +1,15 @@
 import * as React from 'react';
+import { Suspense } from 'react';
 import { BrowserRouter, Switch, Route } from 'react-router-dom';
 
-import Header from './header';
-import List from './list';
+import Loading from './loading';
+const Header = React.lazy(() => import('./header'));
+const Home = () => <h2>home</h2>;
+const List = React.lazy(() => import('./list'));
 
 const Router = () => (
   <BrowserRouter>
-    <div>
+    <Suspense fallback={<Loading />}>
       <Header />
       <Switch>
         <Route exact path="/" component={Home} />
@@ -14,10 +17,8 @@ const Router = () => (
         <Route path="/list/:category" component={List} />
         <Route component={Home} />
       </Switch>
-    </div>
+    </Suspense>
   </BrowserRouter>
 );
-
-const Home = () => <h2>home</h2>;
 
 export default Router;
