@@ -1,17 +1,18 @@
-
 const listUrl = '/api/list';
 const categoryUrl = '/api/category';
 const postUrlUrl = '/api/url';
 
 export default class Client {
-  async getList(category :string, offset :number) {
+  getList<T>(category: string, offset: number): Promise<T> {
     const url = category === undefined ? listUrl : listUrl + '/' + category;
-    const query = (offset === 0 || offset === undefined) ? "" : `?offset=${offset}`;
+    const query =
+      offset === 0 || offset === undefined ? '' : `?offset=${offset}`;
     return fetch(url + query)
       .then(res => {
         return res.json();
-      }).then(json => {
-        return json
+      })
+      .then(json => {
+        return json;
       });
   }
 
@@ -19,19 +20,19 @@ export default class Client {
     return fetch(categoryUrl)
       .then(res => {
         return res.json();
-      }).then(json => {
-        return json["categories"];
+      })
+      .then(json => {
+        return json['categories'];
       });
   }
 
   async postUrl(data) {
     return fetch(postUrlUrl, {
-      method: "POST",
+      method: 'POST',
       headers: {
-        "Content-Type": "application/json"
+        'Content-Type': 'application/json',
       },
-      body: JSON.stringify(data)
+      body: JSON.stringify(data),
     });
   }
 }
-

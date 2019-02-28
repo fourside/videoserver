@@ -10,11 +10,11 @@ const Header = () => {
   const [isModalOpen, setModalOpen] = useState(false);
   const [isNotified, setNotified] = useState(false);
 
-  const toggleModal = () :void => {
+  const toggleModal = (): void => {
     setModalOpen(!isModalOpen);
   };
 
-  const notifyHttp = () :void => {
+  const notifyHttp = (): void => {
     setNotified(true);
     setTimeout(() => {
       setNotified(false);
@@ -28,17 +28,16 @@ const Header = () => {
         <Menu toggleModal={toggleModal} />
       </MenuWrapper>
 
-      <Notification message="OK!" isShown={isNotified}/>
+      <Notification message="OK!" isShown={isNotified} />
 
       <Modal
         closeModal={toggleModal}
         notifyHttp={notifyHttp}
         isOpen={isModalOpen}
       />
-
     </HeaderWrapper>
   );
-}
+};
 
 const HeaderWrapper = styled.header`
   display: flex;

@@ -7,28 +7,31 @@ import useCategory from '../hooks/use_category';
 import Client from '../shared/client';
 
 interface VideoFormProps {
-  close: () => void
-  notifyHttp: () => void
+  close: () => void;
+  notifyHttp: () => void;
 }
 interface FormValues {
-  url: string
-  category: string
-  subtitle: boolean
+  url: string;
+  category: string;
+  subtitle: boolean;
 }
 interface ErrMessage {
-  message: string
-  isError: boolean
+  message: string;
+  isError: boolean;
 }
-const VideoForm = (props :VideoFormProps) => {
-  let urlInput :HTMLElement | null;
+const VideoForm = (props: VideoFormProps) => {
+  let urlInput: HTMLElement | null;
   const [formValues, setFormValues] = useState<FormValues>({
-    url: "",
-    category: "",
-    subtitle: false
+    url: '',
+    category: '',
+    subtitle: false,
   });
   const [isValid, setValid] = useState<boolean>(false);
   const categories = useCategory();
-  const [errMessage, setErrMessage] = useState<ErrMessage>({isError: false, message: ""});
+  const [errMessage, setErrMessage] = useState<ErrMessage>({
+    isError: false,
+    message: '',
+  });
 
   useLayoutEffect(() => {
     if (urlInput) {
@@ -36,74 +39,83 @@ const VideoForm = (props :VideoFormProps) => {
     }
   }, []);
 
-  const handleSubmit = (e :any) :void => {
+  const handleSubmit = (e: any): void => {
     e.preventDefault();
     if (!isValid) {
       return;
     }
     clearErrorNotification();
-    new Client().postUrl(formValues).then((res) => {
-      if (res.ok) {
-        props.close();
-        props.notifyHttp();
-      } else {
-        res.text().then(text => {
-          notifyError(text);
-        })
-      }
-    }).catch(err => {
-      notifyError(err);
-    });
-  }
-
-  const notifyError = (message :string) :void => {
-    setErrMessage({isError: true, message: message});
+    new Client()
+      .postUrl(formValues)
+      .then(res => {
+        if (res.ok) {
+          props.close();
+          props.notifyHttp();
+        } else {
+          res.text().then(text => {
+            notifyError(text);
+          });
+        }
+      })
+      .catch(err => {
+        notifyError(err);
+      });
   };
 
-  const clearErrorNotification = () :void => {
-    setErrMessage({isError: false, message: ""});
+  const notifyError = (message: string): void => {
+    setErrMessage({ isError: true, message: message });
   };
 
-  const handleUrlChange = (e :any) :void => {
+  const clearErrorNotification = (): void => {
+    setErrMessage({ isError: false, message: '' });
+  };
+
+  const handleUrlChange = (e: any): void => {
     setFormValues({
       ...formValues,
-      url: e.target.value
+      url: e.target.value,
     });
     validate();
   };
 
-  const handleCategoryChange = (e :string) :void => {
+  const handleCategoryChange = (e: string): void => {
     setFormValues({
       ...formValues,
-      category: e
+      category: e,
     });
     validate();
   };
 
-  const handleSubtitleChange = (e :any) :void => {
+  const handleSubtitleChange = (e: any): void => {
     setFormValues({
       ...formValues,
-      category: e.target.checked
+      category: e.target.checked,
     });
     validate();
   };
 
-  const validate = () :void => {
-    setValid(!!(formValues.url) && !!(formValues.category));
-  }
+  const validate = (): void => {
+    setValid(!!formValues.url && !!formValues.category);
+  };
 
   return (
     <form onSubmit={handleSubmit}>
       <div className="field">
         <label className="label">Video URL</label>
         <div className="control has-icons-left has-icons-right">
-          <input className="input" name="url" type="text" placeholder="URL input"
+          <input
+            className="input"
+            name="url"
+            type="text"
+            placeholder="URL input"
             onChange={handleUrlChange}
             onBlur={validate}
-            ref={input => {urlInput = input}}
+            ref={input => {
+              urlInput = input;
+            }}
           />
           <span className="icon is-small is-left">
-            <i className="fas fa-download"></i>
+            <i className="fas fa-download" />
           </span>
         </div>
       </div>
@@ -111,13 +123,16 @@ const VideoForm = (props :VideoFormProps) => {
       <div className="field">
         <label className="label">Category</label>
         <div className="control has-icons-left has-icons-right">
-          <CategoryInput className="input" name="category" placeholder="Category input"
+          <CategoryInput
+            className="input"
+            name="category"
+            placeholder="Category input"
             onChange={handleCategoryChange}
             onBlur={validate}
             item={categories}
           />
           <span className="icon is-small is-left">
-            <i className="fas fa-tag"></i>
+            <i className="fas fa-tag" />
           </span>
         </div>
       </div>
@@ -125,25 +140,35 @@ const VideoForm = (props :VideoFormProps) => {
       <div className="field">
         <label className="checkbox">
           <div className="control">
-            <input type="checkbox" name="subtitle" onChange={handleSubtitleChange} />
-            <CheckboxText >use subtitle</CheckboxText>
+            <input
+              type="checkbox"
+              name="subtitle"
+              onChange={handleSubtitleChange}
+            />
+            <CheckboxText>use subtitle</CheckboxText>
           </div>
         </label>
       </div>
 
       <div className="field is-grouped">
         <div className="control">
-          <button className="button is-link" disabled={!isValid} >Submit</button>
+          <button className="button is-link" disabled={!isValid}>
+            Submit
+          </button>
         </div>
         <div className="control">
-          <button className="button is-link" onClick={props.close}>Cancel</button>
+          <button className="button is-link" onClick={props.close}>
+            Cancel
+          </button>
         </div>
 
-        <div className={`notification is-danger ${errMessage.isError ? "is-shown" : "is-hidden"}`} >
-          <button className="delete" onClick={clearErrorNotification}></button>
+        <div
+          className={`notification is-danger ${
+            errMessage.isError ? 'is-shown' : 'is-hidden'
+          }`}>
+          <button className="delete" onClick={clearErrorNotification} />
           {errMessage.message}
         </div>
-
       </div>
     </form>
   );

@@ -10,7 +10,7 @@ main {
 
 .http-notify {
   position: absolute;
-  right:calc(50% - 100px);
+  right: calc(50% - 100px);
   top: 10%;
   width: 200px;
 }
@@ -21,7 +21,6 @@ main {
 .is-shown {
   opacity: 0.8;
 }
-input[name="subtitle"] {
+input[name='subtitle'] {
   vertical-align: bottom;
 }
-

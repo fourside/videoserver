@@ -18,10 +18,6 @@ const Router = () => (
   </BrowserRouter>
 );
 
-const Home = () => (
-  <h2>
-    home
-  </h2>
-);
+const Home = () => <h2>home</h2>;
 
 export default Router;

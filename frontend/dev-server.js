@@ -9,7 +9,7 @@ app.use(
   ['/api', '/public', '/feed'],
   proxy({
     //target: 'http://192.168.99.100' // docker toolbox
-    target: 'http://localhost:8080'
+    target: 'http://localhost:8080',
   })
 );
 

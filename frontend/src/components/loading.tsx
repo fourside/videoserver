@@ -8,7 +8,7 @@ const Loading = styled.div`
   height: 64px;
 
   &:after {
-    content: " ";
+    content: ' ';
     display: block;
     border-radius: 50%;
     width: 0;
@@ -32,5 +32,5 @@ const Loading = styled.div`
       transform: rotate(1800deg);
     }
   }
-`
+`;
 export default Loading;

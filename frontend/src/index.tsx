@@ -8,4 +8,3 @@ import '@fortawesome/fontawesome-free/scss/solid.scss';
 import './index.css';
 
 ReactDOM.render(<App />, document.getElementById('root'));
-

@@ -3,16 +3,16 @@ import * as React from 'react';
 import VideoForm from './video_form';
 
 interface ModalProps {
-  closeModal: () => void
-  notifyHttp: () => void
-  isOpen: boolean
+  closeModal: () => void;
+  notifyHttp: () => void;
+  isOpen: boolean;
 }
-const Modal = ({ closeModal, notifyHttp, isOpen} : ModalProps) => {
-  if(!isOpen) {
+const Modal = ({ closeModal, notifyHttp, isOpen }: ModalProps) => {
+  if (!isOpen) {
     return null;
   }
 
-  return(
+  return (
     <div className="modal is-active">
       <div className="modal-background" onClick={closeModal} />
       <div className="modal-card">
@@ -25,12 +25,10 @@ const Modal = ({ closeModal, notifyHttp, isOpen} : ModalProps) => {
             <VideoForm close={closeModal} notifyHttp={notifyHttp} />
           </div>
         </section>
-        <footer className="modal-card-foot">
-        </footer>
+        <footer className="modal-card-foot" />
       </div>
     </div>
   );
-}
-
+};
 
 export default Modal;

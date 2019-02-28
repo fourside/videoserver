@@ -3,15 +3,22 @@ import Downshift from 'downshift';
 import styled from 'styled-components';
 
 interface CategoryInputProps {
-  className: string
-  name: string
-  placeholder: string
-  onChange: (e) => void
-  onBlur: () => void
-  item: Array<string>
+  className: string;
+  name: string;
+  placeholder: string;
+  onChange: (e) => void;
+  onBlur: () => void;
+  item: Array<string>;
 }
 
-const CategoryInput = ({className, name, placeholder, onChange, onBlur, item} : CategoryInputProps) => (
+const CategoryInput = ({
+  className,
+  name,
+  placeholder,
+  onChange,
+  onBlur,
+  item,
+}: CategoryInputProps) => (
   <Downshift onChange={onChange} onInputValueChange={onChange}>
     {({
       getInputProps,
@@ -22,13 +29,14 @@ const CategoryInput = ({className, name, placeholder, onChange, onBlur, item} : 
       selectedItem,
     }) => (
       <div>
-        <input {...getInputProps()}
+        <input
+          {...getInputProps()}
           className={className}
           name={name}
           onBlur={onBlur}
           placeholder={placeholder}
         />
-        { isOpen ? (
+        {isOpen ? (
           <div className="menu">
             <DownshiftUl className="menu-list">
               {item
@@ -43,10 +51,9 @@ const CategoryInput = ({className, name, placeholder, onChange, onBlur, item} : 
                       style: {
                         backgroundColor:
                           highlightedIndex === index ? 'lightgray' : 'white',
-                          fontWeight: selectedItem === item ? 'bold' : 'normal',
+                        fontWeight: selectedItem === item ? 'bold' : 'normal',
                       },
-                    })}
-                  >
+                    })}>
                     {item}
                   </DownshiftLi>
                 ))}
@@ -57,7 +64,6 @@ const CategoryInput = ({className, name, placeholder, onChange, onBlur, item} : 
     )}
   </Downshift>
 );
-
 
 const DownshiftUl = styled.ul`
   list-style: none !important;
