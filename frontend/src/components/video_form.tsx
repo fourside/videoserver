@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { useState, useLayoutEffect } from 'react';
+import { useState, useLayoutEffect, useCallback } from 'react';
 import styled from 'styled-components';
 
 import CategoryInput from './category_input';
@@ -39,36 +39,46 @@ const VideoForm = (props: VideoFormProps) => {
     }
   }, []);
 
-  const handleSubmit = (e: any): void => {
-    e.preventDefault();
-    if (!isValid) {
-      return;
-    }
-    clearErrorNotification();
-    new Client()
-      .postUrl(formValues)
-      .then(res => {
-        if (res.ok) {
-          props.close();
-          props.notifyHttp();
-        } else {
-          res.text().then(text => {
-            notifyError(text);
-          });
-        }
-      })
-      .catch(err => {
-        notifyError(err);
-      });
-  };
+  const handleSubmit = useCallback(
+    (e: any): void => {
+      e.preventDefault();
+      if (!isValid) {
+        return;
+      }
+      setErrMessage({ isError: false, message: '' });
+      new Client()
+        .postUrl(formValues)
+        .then(res => {
+          if (res.ok) {
+            props.close();
+            props.notifyHttp();
+          } else {
+            res.text().then(text => {
+              notifyError(text);
+            });
+          }
+        })
+        .catch(err => {
+          notifyError(err);
+        });
+    },
+    [isValid]
+  );
 
-  const notifyError = (message: string): void => {
-    setErrMessage({ isError: true, message: message });
-  };
+  const notifyError = useCallback(
+    (message: string): void => {
+      setErrMessage({ isError: true, message: message });
+    },
+    [setErrMessage]
+  );
 
-  const clearErrorNotification = (): void => {
-    setErrMessage({ isError: false, message: '' });
-  };
+  const clearErrorNotification = useCallback(
+    (e: any): void => {
+      e.preventDefault();
+      setErrMessage({ isError: false, message: '' });
+    },
+    [setErrMessage]
+  );
 
   const handleUrlChange = (e: any): void => {
     setFormValues({
@@ -89,7 +99,7 @@ const VideoForm = (props: VideoFormProps) => {
   const handleSubtitleChange = (e: any): void => {
     setFormValues({
       ...formValues,
-      category: e.target.checked,
+      subtitle: e.target.checked,
     });
     validate();
   };

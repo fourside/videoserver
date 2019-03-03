@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { useState } from 'react';
+import { useState, useCallback } from 'react';
 import styled from 'styled-components';
 
 import Menu from './menu';
@@ -10,16 +10,16 @@ const Header = () => {
   const [isModalOpen, setModalOpen] = useState(false);
   const [isNotified, setNotified] = useState(false);
 
-  const toggleModal = (): void => {
+  const toggleModal = useCallback((): void => {
     setModalOpen(!isModalOpen);
-  };
+  }, [isModalOpen]);
 
-  const notifyHttp = (): void => {
+  const notifyHttp = useCallback((): void => {
     setNotified(true);
     setTimeout(() => {
       setNotified(false);
     }, 2000);
-  };
+  }, []);
 
   return (
     <HeaderWrapper>

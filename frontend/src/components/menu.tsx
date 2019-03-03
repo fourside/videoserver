@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { NavLink } from 'react-router-dom';
 
 interface MenuProps {
@@ -17,16 +17,22 @@ const Menu = ({ toggleModal }: MenuProps) => {
     };
   });
 
-  const handleMenuClick = (e: any): void => {
-    button = e.target;
-    setActive(!active);
-  };
+  const handleMenuClick = useCallback(
+    (e: any): void => {
+      button = e.target;
+      setActive(prev => !prev);
+    },
+    [setActive]
+  );
 
-  const handleExceptMenuClick = (e: any): void => {
-    if (active && button !== e.target) {
-      setActive(false);
-    }
-  };
+  const handleExceptMenuClick = useCallback(
+    (e: any): void => {
+      if (active && button !== e.target) {
+        setActive(false);
+      }
+    },
+    [active]
+  );
 
   return (
     <div className={(active ? 'is-active' : '') + ' dropdown is-right'}>

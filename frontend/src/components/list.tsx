@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import styled from 'styled-components';
 
 import Client from '../shared/client';
@@ -46,10 +46,10 @@ const List = (props: RouterProps) => {
   const category = useCategory();
   const listRes = useList(props.match.params.category, current);
 
-  const handleCategorySelect = (e: any): void => {
+  const handleCategorySelect = useCallback((e: any) => {
     setCurrent(0);
     props.history.push(`/list/${e.target.value}`);
-  };
+  }, []);
 
   if (listRes.videos === undefined) {
     return <Loading />;
