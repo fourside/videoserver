@@ -15,5 +15,5 @@ module.exports = {
     "node"
   ],
   "snapshotSerializers": ["enzyme-to-json/serializer"],
-  "setupTestFrameworkScriptFile": "./setupEnzyme.ts",
+  "setupFilesAfterEnv": ["./setupEnzyme.ts"],
 }
