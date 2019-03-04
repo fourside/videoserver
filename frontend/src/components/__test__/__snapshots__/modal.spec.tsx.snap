@@ -1,0 +1,170 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`snapshot 1`] = `
+<div
+  className="modal is-active"
+>
+  <div
+    className="modal-background"
+    onClick={[Function]}
+  />
+  <div
+    className="modal-card"
+  >
+    <header
+      className="modal-card-head"
+    >
+      <p
+        className="modal-card-title"
+      >
+        Video Form
+      </p>
+      <button
+        className="delete"
+        onClick={[Function]}
+      />
+    </header>
+    <section
+      className="modal-card-body"
+    >
+      <div
+        className="content"
+      >
+        <form
+          onSubmit={[Function]}
+        >
+          <div
+            className="field"
+          >
+            <label
+              className="label"
+            >
+              Video URL
+            </label>
+            <div
+              className="control has-icons-left has-icons-right"
+            >
+              <input
+                className="input"
+                name="url"
+                onBlur={[Function]}
+                onChange={[Function]}
+                placeholder="URL input"
+                type="text"
+              />
+              <span
+                className="icon is-small is-left"
+              >
+                <i
+                  className="fas fa-download"
+                />
+              </span>
+            </div>
+          </div>
+          <div
+            className="field"
+          >
+            <label
+              className="label"
+            >
+              Category
+            </label>
+            <div
+              className="control has-icons-left has-icons-right"
+            >
+              <div
+                aria-expanded={false}
+                aria-haspopup="listbox"
+                aria-labelledby="downshift-0-label"
+                aria-owns={null}
+                role="combobox"
+              >
+                <input
+                  aria-activedescendant={null}
+                  aria-autocomplete="list"
+                  aria-controls={null}
+                  aria-labelledby="downshift-0-label"
+                  autoComplete="off"
+                  className="input"
+                  id="downshift-0-input"
+                  name="category"
+                  onBlur={[Function]}
+                  onChange={[Function]}
+                  onKeyDown={[Function]}
+                  placeholder="Category input"
+                  value=""
+                />
+              </div>
+              <span
+                className="icon is-small is-left"
+              >
+                <i
+                  className="fas fa-tag"
+                />
+              </span>
+            </div>
+          </div>
+          <div
+            className="field"
+          >
+            <label
+              className="checkbox"
+            >
+              <div
+                className="control"
+              >
+                <input
+                  name="subtitle"
+                  onChange={[Function]}
+                  type="checkbox"
+                />
+                <span
+                  className="sc-htpNat greLGm"
+                >
+                  use subtitle
+                </span>
+              </div>
+            </label>
+          </div>
+          <div
+            className="field is-grouped"
+          >
+            <div
+              className="control"
+            >
+              <button
+                className="button is-link"
+                disabled={true}
+              >
+                Submit
+              </button>
+            </div>
+            <div
+              className="control"
+            >
+              <button
+                className="button is-link"
+                onClick={[Function]}
+              >
+                Cancel
+              </button>
+            </div>
+            <div
+              className="notification is-danger is-hidden"
+            >
+              <button
+                className="delete"
+                onClick={[Function]}
+              />
+              
+            </div>
+          </div>
+        </form>
+      </div>
+    </section>
+    <footer
+      className="modal-card-foot"
+    />
+  </div>
+</div>
+`;
