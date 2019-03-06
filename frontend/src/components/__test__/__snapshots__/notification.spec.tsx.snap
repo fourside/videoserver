@@ -1,12 +1,3 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
-exports[`snapshot 1`] = `
-<div
-  className="notification is-success http-notify is-shown"
->
-  <button
-    className="delete"
-  />
-  OK
-</div>
-`;
+exports[`snapshot 1`] = `ShallowWrapper {}`;
