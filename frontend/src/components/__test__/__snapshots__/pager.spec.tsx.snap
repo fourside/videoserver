@@ -32,7 +32,9 @@ exports[`snapshot 1`] = `
       aria-label="Page 2"
       className="pagination-link is-current"
     >
-      2
+      <span>
+        2
+      </span>
     </li>
   </ul>
 </nav>

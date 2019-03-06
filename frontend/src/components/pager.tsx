@@ -19,7 +19,7 @@ const Pager = ({ total, currentPage, onChange }: PagerProps) => {
           className="pagination-link is-current"
           aria-label={`Page ${i}`}
           aria-current="page">
-          {i}
+          <span>{i}</span>
         </li>
       );
     } else {
