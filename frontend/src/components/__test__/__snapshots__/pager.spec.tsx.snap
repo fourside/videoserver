@@ -1,6 +1,6 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
-exports[`snapshot 1`] = `
+exports[`Pager snapshot 1`] = `
 <nav
   aria-label="pagination"
   className="pagination is-small sc-bdVaJa ZacCn"
