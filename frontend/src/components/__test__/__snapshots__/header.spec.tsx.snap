@@ -84,7 +84,9 @@ exports[`snapshot 1`] = `
     <button
       className="delete"
     />
-    OK!
+    <span>
+      OK!
+    </span>
   </div>
 </header>
 `;
