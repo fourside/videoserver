@@ -1,0 +1,41 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`Pager snapshot 1`] = `
+<nav
+  aria-label="pagination"
+  className="pagination is-small sc-bdVaJa ZacCn"
+  role="navigation"
+>
+  <ul
+    className="pagination-list"
+  >
+    <li>
+      <a
+        aria-label="Goto page 0"
+        className="pagination-link"
+        onClick={[Function]}
+      >
+        0
+      </a>
+    </li>
+    <li>
+      <a
+        aria-label="Goto page 1"
+        className="pagination-link"
+        onClick={[Function]}
+      >
+        1
+      </a>
+    </li>
+    <li
+      aria-current="page"
+      aria-label="Page 2"
+      className="pagination-link is-current"
+    >
+      <span>
+        2
+      </span>
+    </li>
+  </ul>
+</nav>
+`;

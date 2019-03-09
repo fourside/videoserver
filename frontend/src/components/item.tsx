@@ -1,6 +1,6 @@
 import * as React from 'react';
-import prettyBytes from 'pretty-bytes';
 
+const PrettyBytes = require('pretty-bytes');
 require('lazysizes');
 
 interface ItemProps {
@@ -44,7 +44,7 @@ export const Item = ({ video }: ItemProps) => (
                 <i className="fas fa-download" />
               </a>
             </span>
-            <small>{prettyBytes(video.bytes)}</small>
+            <small>{PrettyBytes(video.bytes)}</small>
           </p>
         </div>
       </div>

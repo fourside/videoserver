@@ -10,7 +10,7 @@ const Notification = ({ message, isShown }: NotificationProps) => (
       isShown ? 'is-shown' : 'is-hidden'
     }`}>
     <button className="delete" />
-    {message}
+    <span>{message}</span>
   </div>
 );
 

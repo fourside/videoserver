@@ -1,0 +1,65 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`Item snapshot 1`] = `
+<div
+  className="box is-half"
+>
+  <article
+    className="media"
+  >
+    <div
+      className="media-left"
+    >
+      <figure
+        className="image is-256x256"
+      >
+        <img
+          alt=""
+          className="lazyload"
+          data-sizes="auto"
+          data-src=""
+        />
+      </figure>
+    </div>
+    <div
+      className="media-content"
+    >
+      <div
+        className="content"
+      >
+        <p>
+          <strong>
+            
+          </strong>
+        </p>
+        <p>
+          <span>
+            
+          </span>
+        </p>
+        <p>
+          <small>
+            
+          </small>
+        </p>
+        <p>
+          <span
+            className="icon"
+          >
+            <a
+              href=""
+            >
+              <i
+                className="fas fa-download"
+              />
+            </a>
+          </span>
+          <small>
+            256 B
+          </small>
+        </p>
+      </div>
+    </div>
+  </article>
+</div>
+`;
