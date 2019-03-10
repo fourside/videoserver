@@ -2,6 +2,8 @@ package main
 
 import (
 	"bufio"
+	"crypto/sha256"
+	"encoding/hex"
 	"fmt"
 	"io"
 	"log"
@@ -18,7 +20,7 @@ const (
 	downloader = "youtube-dl"
 )
 
-func download(url string, category string, subtitle bool) error {
+func download(url string, category string, subtitle bool) (string, error) {
 	outputOption := fmt.Sprintf(publicDir+"/%s/%%(title)s.%%(ext)s", category)
 	commandArgs := []string{
 		"-o",
@@ -54,17 +56,19 @@ func download(url string, category string, subtitle bool) error {
 
 	stdout, err := cmd.StdoutPipe()
 	if err != nil {
-		return err
+		return "", err
 	}
 	stderr, err := cmd.StderrPipe()
 	if err != nil {
-		return err
+		return "", err
 	}
 	go streamStdoutReader(stdout, url)
 	go streamStderrReader(stderr)
 
 	err = cmd.Start()
-	return err
+	sum := sha256.Sum256([]byte(url))
+	requestID := hex.EncodeToString(sum[:])
+	return requestID, err
 }
 
 func getVideoTitle(url string) string {

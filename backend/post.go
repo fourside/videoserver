@@ -31,12 +31,13 @@ func postURL(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	err = download(post.URL, post.Category, post.Subtitle)
+	reqestID, err := download(post.URL, post.Category, post.Subtitle)
 	if err != nil {
 		log.Printf("command failed: %v", err.Error())
 		responseError(w, err)
 		return
 	}
+	w.Header().Set("X-Request-ID", reqestID)
 }
 
 type postURLRequest struct {
