@@ -14,6 +14,7 @@ import (
 
 var (
 	logPatttern = regexp.MustCompile(`(\d{1,3}\.\d%).+?(ETA.+)`)
+	progressMap = make(map[string](chan string))
 )
 
 const (
