@@ -37,30 +37,6 @@ func download(url string, category string, subtitle bool) (string, error) {
 	commandArgs = append(commandArgs, url)
 	cmd := exec.Command(downloader, commandArgs...)
 
-	streamStdoutReader := func(r io.Reader, url string, channel chan string) {
-		title := getVideoTitle(url)
-		scanner := bufio.NewScanner(r)
-		var percent = ""
-		var isEnd = false
-		go func() {
-			for {
-				<-channel
-				channel <- percent
-				if isEnd {
-					break
-				}
-			}
-		}()
-		for scanner.Scan() {
-			stdout := scanner.Text()
-			result := logPatttern.FindSubmatch([]byte(stdout))
-			if len(result) > 0 {
-				percent = string(result[1])
-				log.Printf("%s : %s, %s", title, percent, string(result[2]))
-			}
-		}
-		isEnd = true
-	}
 	streamStderrReader := func(r io.Reader) {
 		scanner := bufio.NewScanner(r)
 		for scanner.Scan() {
@@ -94,4 +70,29 @@ func getVideoTitle(url string) string {
 	}
 	out, _ := exec.Command(downloader, commandArgs...).CombinedOutput()
 	return strings.TrimRight(string(out), "\n")
+}
+
+func streamStdoutReader(r io.Reader, url string, channel chan string) {
+	title := getVideoTitle(url)
+	scanner := bufio.NewScanner(r)
+	var percent = ""
+	var isEnd = false
+	go func() {
+		for {
+			<-channel
+			channel <- percent
+			if isEnd {
+				break
+			}
+		}
+	}()
+	for scanner.Scan() {
+		stdout := scanner.Text()
+		result := logPatttern.FindSubmatch([]byte(stdout))
+		if len(result) > 0 {
+			percent = string(result[1])
+			log.Printf("%s : %s, %s", title, percent, string(result[2]))
+		}
+	}
+	isEnd = true
 }
