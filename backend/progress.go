@@ -20,10 +20,12 @@ func progress(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, fmt.Sprintf("requestID[%s] is not in progress.", requestID), http.StatusInternalServerError)
 		return
 	}
-	channel <- "give me the progress"
+	channel <- Progress{}
 	progress := <-channel
 	res, err := json.Marshal(progressResponse{
-		Progress: progress,
+		Progress: progress.Percent,
+		Title:    progress.Title,
+		ETA:      progress.ETA,
 	})
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusBadRequest)
@@ -36,5 +38,7 @@ func progress(w http.ResponseWriter, r *http.Request) {
 }
 
 type progressResponse struct {
-	Progress string `json:"progress"`
+	Progress float64 `json:"progress"`
+	ETA      string  `json:"ETA"`
+	Title    string  `json:"title"`
 }

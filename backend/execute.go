@@ -9,12 +9,13 @@ import (
 	"log"
 	"os/exec"
 	"regexp"
+	"strconv"
 	"strings"
 )
 
 var (
-	logPatttern = regexp.MustCompile(`(\d{1,3}\.\d%).+?(ETA.+)`)
-	progressMap = make(map[string](chan string))
+	logPatttern = regexp.MustCompile(`(\d{1,3}\.\d)%.+?ETA(.+)`)
+	progressMap = make(map[string](chan Progress))
 )
 
 const (
@@ -54,7 +55,7 @@ func download(url string, category string, subtitle bool) (string, error) {
 	}
 	sum := sha256.Sum256([]byte(url))
 	requestID := hex.EncodeToString(sum[:])
-	channel := make(chan string)
+	channel := make(chan Progress)
 	progressMap[requestID] = channel
 	go streamStdoutReader(stdout, url, channel)
 	go streamStderrReader(stderr)
@@ -72,15 +73,16 @@ func getVideoTitle(url string) string {
 	return strings.TrimRight(string(out), "\n")
 }
 
-func streamStdoutReader(r io.Reader, url string, channel chan string) {
+func streamStdoutReader(r io.Reader, url string, channel chan Progress) {
 	title := getVideoTitle(url)
 	scanner := bufio.NewScanner(r)
-	var percent = ""
+	var percent = 0.0
+	var eta = ""
 	var isEnd = false
 	go func() {
 		for {
 			<-channel
-			channel <- percent
+			channel <- Progress{Title: title, Percent: percent, ETA: eta}
 			if isEnd {
 				break
 			}
@@ -90,9 +92,16 @@ func streamStdoutReader(r io.Reader, url string, channel chan string) {
 		stdout := scanner.Text()
 		result := logPatttern.FindSubmatch([]byte(stdout))
 		if len(result) > 0 {
-			percent = string(result[1])
-			log.Printf("%s : %s, %s", title, percent, string(result[2]))
+			log.Printf("%s : %v, %s", title, percent, string(result[2]))
+			percent, _ = strconv.ParseFloat(string(result[1]), 64)
+			eta = string(result[2])
 		}
 	}
 	isEnd = true
+}
+
+type Progress struct {
+	Title   string
+	Percent float64
+	ETA     string
 }
