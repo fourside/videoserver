@@ -37,16 +37,29 @@ func download(url string, category string, subtitle bool) (string, error) {
 	commandArgs = append(commandArgs, url)
 	cmd := exec.Command(downloader, commandArgs...)
 
-	streamStdoutReader := func(r io.Reader, url string) {
+	streamStdoutReader := func(r io.Reader, url string, channel chan string) {
 		title := getVideoTitle(url)
 		scanner := bufio.NewScanner(r)
+		var percent = ""
+		var isEnd = false
+		go func() {
+			for {
+				<-channel
+				channel <- percent
+				if isEnd {
+					break
+				}
+			}
+		}()
 		for scanner.Scan() {
 			stdout := scanner.Text()
 			result := logPatttern.FindSubmatch([]byte(stdout))
 			if len(result) > 0 {
-				log.Printf("%s : %s, %s", title, string(result[1]), string(result[2]))
+				percent = string(result[1])
+				log.Printf("%s : %s, %s", title, percent, string(result[2]))
 			}
 		}
+		isEnd = true
 	}
 	streamStderrReader := func(r io.Reader) {
 		scanner := bufio.NewScanner(r)
@@ -63,12 +76,14 @@ func download(url string, category string, subtitle bool) (string, error) {
 	if err != nil {
 		return "", err
 	}
-	go streamStdoutReader(stdout, url)
+	sum := sha256.Sum256([]byte(url))
+	requestID := hex.EncodeToString(sum[:])
+	channel := make(chan string)
+	progressMap[requestID] = channel
+	go streamStdoutReader(stdout, url, channel)
 	go streamStderrReader(stderr)
 
 	err = cmd.Start()
-	sum := sha256.Sum256([]byte(url))
-	requestID := hex.EncodeToString(sum[:])
 	return requestID, err
 }
 
