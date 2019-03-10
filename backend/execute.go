@@ -11,6 +11,7 @@ import (
 	"regexp"
 	"strconv"
 	"strings"
+	"time"
 )
 
 var (
@@ -79,10 +80,11 @@ func streamStdoutReader(r io.Reader, url string, channel chan progress) {
 	var percent = 0.0
 	var eta = ""
 	var isEnd = false
+	var now = time.Now()
 	go func() {
 		for {
 			<-channel
-			channel <- progress{Title: title, Percent: percent, ETA: eta}
+			channel <- progress{Title: title, Percent: percent, ETA: eta, CreatedAt: now}
 			if isEnd {
 				break
 			}
@@ -100,7 +102,8 @@ func streamStdoutReader(r io.Reader, url string, channel chan progress) {
 }
 
 type progress struct {
-	Title   string
-	Percent float64
-	ETA     string
+	Title     string
+	Percent   float64
+	ETA       string
+	CreatedAt time.Time
 }
