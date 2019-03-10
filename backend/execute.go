@@ -15,7 +15,7 @@ import (
 
 var (
 	logPatttern = regexp.MustCompile(`(\d{1,3}\.\d)%.+?ETA(.+)`)
-	progressMap = make(map[string](chan Progress))
+	progressMap = make(map[string](chan progress))
 )
 
 const (
@@ -55,7 +55,7 @@ func download(url string, category string, subtitle bool) (string, error) {
 	}
 	sum := sha256.Sum256([]byte(url))
 	requestID := hex.EncodeToString(sum[:])
-	channel := make(chan Progress)
+	channel := make(chan progress)
 	progressMap[requestID] = channel
 	go streamStdoutReader(stdout, url, channel)
 	go streamStderrReader(stderr)
@@ -73,7 +73,7 @@ func getVideoTitle(url string) string {
 	return strings.TrimRight(string(out), "\n")
 }
 
-func streamStdoutReader(r io.Reader, url string, channel chan Progress) {
+func streamStdoutReader(r io.Reader, url string, channel chan progress) {
 	title := getVideoTitle(url)
 	scanner := bufio.NewScanner(r)
 	var percent = 0.0
@@ -82,7 +82,7 @@ func streamStdoutReader(r io.Reader, url string, channel chan Progress) {
 	go func() {
 		for {
 			<-channel
-			channel <- Progress{Title: title, Percent: percent, ETA: eta}
+			channel <- progress{Title: title, Percent: percent, ETA: eta}
 			if isEnd {
 				break
 			}
@@ -100,7 +100,7 @@ func streamStdoutReader(r io.Reader, url string, channel chan Progress) {
 	isEnd = true
 }
 
-type Progress struct {
+type progress struct {
 	Title   string
 	Percent float64
 	ETA     string
