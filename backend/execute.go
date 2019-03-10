@@ -92,7 +92,6 @@ func streamStdoutReader(r io.Reader, url string, channel chan progress) {
 		stdout := scanner.Text()
 		result := logPatttern.FindSubmatch([]byte(stdout))
 		if len(result) > 0 {
-			log.Printf("%s : %v, %s", title, percent, string(result[2]))
 			percent, _ = strconv.ParseFloat(string(result[1]), 64)
 			eta = string(result[2])
 		}
