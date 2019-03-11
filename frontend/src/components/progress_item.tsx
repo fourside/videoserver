@@ -2,7 +2,6 @@ import * as React from 'react';
 import { useState } from 'react';
 import LazyImage from './lazy_image';
 import Client from '../shared/client';
-require('lazysizes');
 
 export interface Progress {
   title: string;

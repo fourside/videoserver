@@ -2,7 +2,6 @@ import * as React from 'react';
 import LazyImage from './lazy_image';
 
 const PrettyBytes = require('pretty-bytes');
-require('lazysizes');
 
 interface ItemProps {
   video: Video;
