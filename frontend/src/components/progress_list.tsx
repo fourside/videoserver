@@ -19,6 +19,7 @@ const useProgress = (): ProgressResponse => {
     worker.onmessage = (e) => {
       setResponse({ progresses: e.data });
     };
+    return worker.terminate();
   }, [setResponse]);
 
   return res;
