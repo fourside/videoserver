@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 
 import Client from '../shared/client';
 import { ProgressItem, Progress } from './progress_item';
@@ -13,12 +13,12 @@ const useProgress = (): ProgressResponse => {
     progresses: [],
   });
 
-  const getProgress = async () => {
-    const progresses = await new Client().getProgress();
-    setResponse({ progresses: progresses });
-  };
   useEffect(() => {
-    getProgress();
+    const worker = new Worker("/progress_worker.ts");
+    worker.postMessage("init");
+    worker.onmessage = (e) => {
+      setResponse({ progresses: e.data });
+    };
   }, [setResponse]);
 
   return res;
