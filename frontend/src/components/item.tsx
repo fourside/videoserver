@@ -1,4 +1,5 @@
 import * as React from 'react';
+import LazyImage from './lazy_image';
 
 const PrettyBytes = require('pretty-bytes');
 require('lazysizes');
@@ -20,14 +21,7 @@ export const Item = ({ video }: ItemProps) => (
   <div className="box is-half">
     <article className="media">
       <div className="media-left">
-        <figure className="image is-256x256">
-          <img
-            data-src={video.image}
-            data-sizes="auto"
-            className="lazyload"
-            alt={video.title}
-          />
-        </figure>
+        <LazyImage title={video.title} image={video.image} />
       </div>
       <div className="media-content">
         <div className="content">

@@ -1,5 +1,6 @@
 import * as React from 'react';
 import { useState } from 'react';
+import LazyImage from './lazy_image';
 import Client from '../shared/client';
 require('lazysizes');
 
@@ -15,14 +16,7 @@ export const ProgressItem = (props: Progress) => {
     <div className="box is-half is-progress">
       <article className="media">
         <div className="media-left">
-          <figure className="image is-256x256">
-            <img
-              data-src={props.image}
-              data-sizes="auto"
-              className="lazyload"
-              alt={props.title}
-            />
-          </figure>
+          <LazyImage title={props.title} image={props.image} />
         </div>
         <div className="media-content">
           <div className="content">
