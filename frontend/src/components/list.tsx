@@ -3,6 +3,7 @@ import { useState, useEffect, useCallback } from 'react';
 import styled from 'styled-components';
 
 import Client from '../shared/client';
+import ProgressList from './progress_list';
 import { Item, Video } from './item';
 import Pager from './pager';
 import Loading from './loading';
@@ -75,6 +76,7 @@ const List = (props: RouterProps) => {
         </SideSelect>
       </SubNav>
 
+      <ProgressList />
       {listRes.videos.map(video => (
         <Item video={video} key={video.title} />
       ))}
