@@ -22,7 +22,7 @@ const polling = () => {
     } else {
       clearInterval(id)
     }
-  }, 2000);
+  }, 4000);
 };
 
 self.onmessage = (e) => {
