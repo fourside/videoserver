@@ -11,7 +11,7 @@ import (
 
 func progressAPI(w http.ResponseWriter, r *http.Request) {
 	var list = progressList{}
-	for key, channel := range progressMap {
+	for _, channel := range progressMap {
 		channel <- progress{}
 		progress := <-channel
 		imagePath, err := globImagePath(progress.Title)
@@ -27,10 +27,6 @@ func progressAPI(w http.ResponseWriter, r *http.Request) {
 			CreatedAt: progress.CreatedAt,
 		}
 		list = append(list, progressResponse)
-		if progress.Percent >= 100.0 {
-			close(channel)
-			delete(progressMap, key)
-		}
 	}
 
 	w.Header().Set("Content-Type", "application/json")

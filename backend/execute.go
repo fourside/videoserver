@@ -58,7 +58,7 @@ func download(url string, category string, subtitle bool) (string, error) {
 	requestID := hex.EncodeToString(sum[:])
 	channel := make(chan progress)
 	progressMap[requestID] = channel
-	go streamStdoutReader(stdout, url, channel)
+	go streamStdoutReader(stdout, url, channel, requestID)
 	go streamStderrReader(stderr)
 
 	err = cmd.Start()
@@ -74,7 +74,7 @@ func getVideoTitle(url string) string {
 	return strings.TrimRight(string(out), "\n")
 }
 
-func streamStdoutReader(r io.Reader, url string, channel chan progress) {
+func streamStdoutReader(r io.Reader, url string, channel chan progress, requestID string) {
 	title := getVideoTitle(url)
 	scanner := bufio.NewScanner(r)
 	var percent = 0.0
@@ -86,6 +86,8 @@ func streamStdoutReader(r io.Reader, url string, channel chan progress) {
 			<-channel
 			channel <- progress{Title: title, Percent: percent, ETA: eta, CreatedAt: now}
 			if isEnd {
+				delete(progressMap, requestID)
+				close(channel)
 				break
 			}
 		}

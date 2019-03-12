@@ -1,6 +1,7 @@
 const listUrl = '/api/list';
 const categoryUrl = '/api/category';
 const postUrlUrl = '/api/url';
+const progressUrl = '/api/progress';
 
 export default class Client {
   getList<T>(category: string, offset: number): Promise<T> {
@@ -34,5 +35,15 @@ export default class Client {
       },
       body: JSON.stringify(data),
     });
+  }
+
+  async getProgress() {
+    return fetch(progressUrl)
+      .then(res => {
+        return res.json();
+      })
+      .then(json => {
+        return json['progresses'];
+      });
   }
 }
