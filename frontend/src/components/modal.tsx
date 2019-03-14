@@ -1,13 +1,12 @@
 import * as React from 'react';
 
-import VideoForm from './video_form';
+import VideoForm from '../container/video_form';
 
 interface ModalProps {
   closeModal: () => void;
-  notifyHttp: () => void;
   isOpen: boolean;
 }
-const Modal = ({ closeModal, notifyHttp, isOpen }: ModalProps) => {
+const Modal = ({ closeModal, isOpen }: ModalProps) => {
   if (!isOpen) {
     return null;
   }
@@ -22,7 +21,7 @@ const Modal = ({ closeModal, notifyHttp, isOpen }: ModalProps) => {
         </header>
         <section className="modal-card-body">
           <div className="content">
-            <VideoForm close={closeModal} notifyHttp={notifyHttp} />
+            <VideoForm close={closeModal} />
           </div>
         </section>
         <footer className="modal-card-foot" />

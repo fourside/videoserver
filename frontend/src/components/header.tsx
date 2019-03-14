@@ -4,22 +4,14 @@ import styled from 'styled-components';
 
 import Menu from './menu';
 import Modal from './modal';
-import Notification from './notification';
+import Notification from '../container/notification';
 
 const Header = () => {
   const [isModalOpen, setModalOpen] = useState(false);
-  const [isNotified, setNotified] = useState(false);
 
   const toggleModal = useCallback((): void => {
     setModalOpen(!isModalOpen);
   }, [isModalOpen]);
-
-  const notifyHttp = useCallback((): void => {
-    setNotified(true);
-    setTimeout(() => {
-      setNotified(false);
-    }, 2000);
-  }, []);
 
   return (
     <HeaderWrapper>
@@ -28,11 +20,10 @@ const Header = () => {
         <Menu toggleModal={toggleModal} />
       </MenuWrapper>
 
-      <Notification message="OK!" isShown={isNotified} />
+      <Notification />
 
       <Modal
         closeModal={toggleModal}
-        notifyHttp={notifyHttp}
         isOpen={isModalOpen}
       />
     </HeaderWrapper>
