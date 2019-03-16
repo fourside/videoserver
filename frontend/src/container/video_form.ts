@@ -1,6 +1,10 @@
 import * as React from 'react';
 import { connect } from 'react-redux';
-import { notifyHttp, clearNotifyHttp } from '../action/video_form';
+import {
+  notifyHttp,
+  clearNotifyHttp,
+  startPolling,
+} from '../action/video_form';
 
 import VideoForm from '../components/video_form';
 
@@ -15,6 +19,9 @@ const mapDispatchToProps = dispatch => {
       setTimeout(() => {
         dispatch(clearNotifyHttp());
       }, 2000);
+      setTimeout(() => {
+        dispatch(startPolling());
+      }, 10000);
     },
   };
 };

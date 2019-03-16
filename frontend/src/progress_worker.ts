@@ -8,6 +8,8 @@ const polling = async () => {
   if (progresses.length > 0) {
     worker.postMessage(progresses);
     setTimeout(polling, 4000);
+  } else {
+    worker.postMessage("done");
   }
 };
 
