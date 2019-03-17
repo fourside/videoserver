@@ -6,7 +6,7 @@ import { startPolling } from '../modules/progress_list';
 import VideoForm from '../components/video_form';
 
 const mapStateToProps = state => {
-  return state.videoForm;
+  return state;
 };
 
 const mapDispatchToProps = dispatch => {

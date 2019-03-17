@@ -7,6 +7,7 @@ import ProgressList from '../container/progress_list';
 import { Item, Video } from './item';
 import Pager from './pager';
 import Loading from './loading';
+import NoVideo from '../container/no_video';
 import CategorySelect from './category_select';
 import useCategory from '../hooks/use_category';
 
@@ -56,7 +57,7 @@ const List = (props: RouterProps) => {
     return <Loading />;
   }
   if (listRes.videos.length === 0) {
-    return <ZeroHit />;
+    return <NoVideo />;
   }
 
   return (
@@ -91,12 +92,6 @@ const List = (props: RouterProps) => {
 };
 
 export default List;
-
-const ZeroHit = () => (
-  <div className="zero-hit notification is-info">
-    <p>There is no video. Add a video in the form.</p>
-  </div>
-);
 
 const SubNav = styled.nav`
   display: flex;
