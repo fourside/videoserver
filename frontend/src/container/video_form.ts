@@ -4,7 +4,7 @@ import {
   notifyHttp,
   clearNotifyHttp,
   startPolling,
-} from '../action/video_form';
+} from '../modules/video_form';
 
 import VideoForm from '../components/video_form';
 

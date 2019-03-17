@@ -7,6 +7,8 @@ interface ProgressResponse {
   progresses: Array<Progress>;
 }
 
+const worker = new Worker('/progress_worker.ts');
+
 const useProgress = (startPolling: boolean): ProgressResponse => {
   const [res, setResponse] = useState<ProgressResponse>({
     progresses: [],
@@ -14,7 +16,6 @@ const useProgress = (startPolling: boolean): ProgressResponse => {
   const [inPolling, setInPolling] = useState<boolean>(startPolling);
 
   useEffect(() => {
-    const worker = new Worker('/progress_worker.ts');
     worker.postMessage('init');
     worker.onmessage = e => {
       if (e.data === 'done') {
@@ -23,9 +24,7 @@ const useProgress = (startPolling: boolean): ProgressResponse => {
         setResponse({ progresses: e.data });
       }
     };
-    return () => {
-      worker.terminate();
-    };
+    return () => {};
   }, [setResponse, startPolling]);
 
   return res;
