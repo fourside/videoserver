@@ -5,8 +5,8 @@ import Notification from '../components/notification';
 
 const mapStateToProps = state => {
   return {
-    message: state.message,
-    isShown: state.isShown,
+    message: state.notification.message,
+    isShown: state.notification.isShown,
   };
 };
 

@@ -1,13 +1,11 @@
-const initalState = { isHTTPNotified: false, startPolling: true };
+const initalState = { isShown: false, message: '' };
 
-export default function reducer(state = initalState, action) {
+export default function notificationReducer(state = initalState, action) {
   switch (action.type) {
     case 'NOTIFY_HTTP':
       return { isShown: true, message: 'OK' };
     case 'CLEAR_NOTIFY_HTTP':
       return { isShown: false, message: '' };
-    case 'START_POLLING_PROGRESS':
-      return { startPolling: true };
     default:
       return state;
   }
@@ -18,7 +16,4 @@ export const notifyHttp = () => {
 };
 export const clearNotifyHttp = () => {
   return { type: 'CLEAR_NOTIFY_HTTP' };
-};
-export const startPolling = () => {
-  return { type: 'START_POLLING' };
 };

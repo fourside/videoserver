@@ -2,30 +2,19 @@ import * as React from 'react';
 import { useState, useCallback } from 'react';
 import styled from 'styled-components';
 
-import Menu from './menu';
-import Modal from './modal';
+import Menu from '../container/menu';
 import Notification from '../container/notification';
 
 const Header = () => {
-  const [isModalOpen, setModalOpen] = useState(false);
-
-  const toggleModal = useCallback((): void => {
-    setModalOpen(!isModalOpen);
-  }, [isModalOpen]);
 
   return (
     <HeaderWrapper>
       <h1 className="title">video server</h1>
       <MenuWrapper>
-        <Menu toggleModal={toggleModal} />
+        <Menu />
       </MenuWrapper>
 
       <Notification />
-
-      <Modal
-        closeModal={toggleModal}
-        isOpen={isModalOpen}
-      />
     </HeaderWrapper>
   );
 };

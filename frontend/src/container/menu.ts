@@ -1,19 +1,22 @@
 import * as React from 'react';
 import { connect } from 'react-redux';
 
-import ProgressList from '../components/progress_list';
+import { toggleModal } from '../modules/modal';
+import Menu from '../components/menu';
 
 const mapStateToProps = state => {
-  return {
-    startPolling: state.progressList.startPolling,
-  };
+  return state;
 };
 
 const mapDispatchToProps = dispatch => {
-  return {};
+  return {
+    toggleModal: () => {
+      dispatch(toggleModal());
+    },
+  };
 };
 
 export default connect(
   mapStateToProps,
   mapDispatchToProps
-)(ProgressList);
+)(Menu);
