@@ -62,7 +62,7 @@ const VideoForm = (props: VideoFormProps) => {
           notifyError(err);
         });
     },
-    [isValid]
+    [formValues]
   );
 
   const notifyError = useCallback(
