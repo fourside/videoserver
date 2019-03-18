@@ -9,11 +9,11 @@ interface ProgressResponse {
 
 const worker = new Worker('/progress_worker.ts');
 
-const useProgress = (startPolling: boolean): ProgressResponse => {
+const useProgress = (startPolling: Date): ProgressResponse => {
   const [res, setResponse] = useState<ProgressResponse>({
     progresses: [],
   });
-  const [inPolling, setInPolling] = useState<boolean>(startPolling);
+  const [inPolling, setInPolling] = useState<boolean>(true);
 
   useEffect(() => {
     worker.postMessage('init');
@@ -31,7 +31,7 @@ const useProgress = (startPolling: boolean): ProgressResponse => {
 };
 
 interface Props {
-  startPolling: boolean;
+  startPolling: Date;
 }
 const ProgressList = ({ startPolling }: Props) => {
   const list = useProgress(startPolling);
