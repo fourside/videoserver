@@ -5,7 +5,9 @@ import (
 	"fmt"
 	"net/http"
 	"path/filepath"
+	"runtime"
 	"sort"
+	"strings"
 	"time"
 )
 
@@ -44,9 +46,16 @@ func progressAPI(w http.ResponseWriter, r *http.Request) {
 }
 
 func globImagePath(title string) (string, error) {
-	matches, err := filepath.Glob(publicDir + "/**/" + title + ".jpg")
+	if runtime.GOOS == "windows" {
+		title = strings.Replace(title, "\"", "'", -1)
+	}
+	pattern := publicDir + "/**/" + title + ".jpg"
+	matches, err := filepath.Glob(pattern)
 	if err != nil {
 		return "", err
+	}
+	if len(matches) == 0 {
+		return "", nil
 	}
 	return matches[0], nil
 }
