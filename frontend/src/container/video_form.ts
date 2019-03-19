@@ -18,7 +18,7 @@ const mapDispatchToProps = dispatch => {
       }, 2000);
       setTimeout(() => {
         dispatch(startPolling());
-      }, 10000);
+      }, 2000);
     },
   };
 };

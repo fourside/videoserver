@@ -21,11 +21,15 @@ func progressAPI(w http.ResponseWriter, r *http.Request) {
 			http.Error(w, err.Error(), http.StatusBadRequest)
 			return
 		}
+		var image = ""
+		if imagePath != "" {
+			image = fmt.Sprintf("http://%s/%s", r.Host, filepath.ToSlash(escapeFilename(imagePath)))
+		}
 		progressResponse := progressResponse{
 			Progress:  progress.Percent,
 			ETA:       progress.ETA,
 			Title:     progress.Title,
-			Image:     fmt.Sprintf("http://%s/%s", r.Host, filepath.ToSlash(escapeFilename(imagePath))),
+			Image:     image,
 			CreatedAt: progress.CreatedAt,
 		}
 		list = append(list, progressResponse)
@@ -64,7 +68,7 @@ type progressResponse struct {
 	Progress  float64   `json:"progress"`
 	ETA       string    `json:"ETA"`
 	Title     string    `json:"title"`
-	Image     string    `json:"image"`
+	Image     string    `json:"image,omitempty"`
 	CreatedAt time.Time `json:"-"`
 }
 type progressList []progressResponse
