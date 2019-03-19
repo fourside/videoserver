@@ -51,13 +51,13 @@ const Menu = ({ toggleModal }: MenuProps) => {
 
       <div className="dropdown-menu" id="dropdown-menu" role="menu">
         <div className="dropdown-content">
-          <NavLink className="dropdown-item" exact to="/">
+          <NavLink className="dropdown-item" exact to="/" activeClassName="is-active">
             Home
           </NavLink>
           <a className="dropdown-item" onClick={toggleModal}>
             Form
           </a>
-          <NavLink className="dropdown-item" exact to="/list">
+          <NavLink className="dropdown-item" exact to="/list" activeClassName="is-active">
             List
           </NavLink>
           <a className="dropdown-item" href="/feed">
