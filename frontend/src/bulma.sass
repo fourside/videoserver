@@ -16,3 +16,15 @@
 @import 'node_modules/bulma/sass/components/modal.sass'
 @import 'node_modules/bulma/sass/components/pagination.sass'
 
+.is-loading
+  position: relative
+  pointer-events: none
+  opacity: 0.5
+  &:after
+    @include loader
+    position: absolute
+    top: calc(50% - 2.5em)
+    left: calc(50% - 2.5em)
+    width: 2.5em
+    height: 2.5em
+    border-width: 0.25em

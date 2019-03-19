@@ -39,7 +39,7 @@ export const ProgressItem = (props: Progress) => {
 
 const ProgressThumbnail = ({ image, title }) => {
   if (image === undefined) {
-    return null; // loading img
+    return <div className="is-loading" />
   }
   return <img src={image} data-sizes="auto" alt={title} />;
 };
