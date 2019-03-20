@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { useState, useEffect, useRef } from 'react';
+import { useState, useEffect } from 'react';
 
 import { ProgressItem, Progress } from './progress_item';
 
@@ -13,13 +13,11 @@ const useProgress = (startPolling: Date): ProgressResponse => {
   const [res, setResponse] = useState<ProgressResponse>({
     progresses: [],
   });
-  const [inPolling, setInPolling] = useState<boolean>(true);
 
   useEffect(() => {
     worker.postMessage('init');
     worker.onmessage = e => {
       if (e.data === 'done') {
-        setInPolling(false);
       } else {
         setResponse({ progresses: e.data });
       }

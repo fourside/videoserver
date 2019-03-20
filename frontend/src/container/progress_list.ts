@@ -1,4 +1,3 @@
-import * as React from 'react';
 import { connect } from 'react-redux';
 
 import ProgressList from '../components/progress_list';
@@ -9,7 +8,7 @@ const mapStateToProps = state => {
   };
 };
 
-const mapDispatchToProps = dispatch => {
+const mapDispatchToProps = () => {
   return {};
 };
 

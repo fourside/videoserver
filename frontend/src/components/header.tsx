@@ -1,12 +1,10 @@
 import * as React from 'react';
-import { useState, useCallback } from 'react';
 import styled from 'styled-components';
 
 import Menu from '../container/menu';
 import Notification from '../container/notification';
 
 const Header = () => {
-
   return (
     <HeaderWrapper>
       <h1 className="title">video server</h1>

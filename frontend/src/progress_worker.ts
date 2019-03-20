@@ -9,10 +9,10 @@ const polling = async () => {
     worker.postMessage(progresses);
     setTimeout(polling, 4000);
   } else {
-    worker.postMessage("done");
+    worker.postMessage('done');
   }
 };
 
-self.onmessage = e => {
+self.onmessage = () => {
   polling();
 };

@@ -1,4 +1,3 @@
-import * as React from 'react';
 import { connect } from 'react-redux';
 import { notifyHttp, clearNotifyHttp } from '../modules/notification';
 import { startPolling } from '../modules/progress_list';

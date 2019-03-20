@@ -40,7 +40,10 @@ const Pager = ({ total, currentPage, onChange }: PagerProps) => {
   );
 };
 
-const CurrentPage = ({ index }) => (
+interface CurrentPageProps {
+  index: number;
+}
+const CurrentPage = ({ index }: CurrentPageProps) => (
   <li
     className="pagination-link is-current"
     aria-label={`Page ${index}`}
@@ -49,7 +52,11 @@ const CurrentPage = ({ index }) => (
   </li>
 );
 
-const Page = ({ index, onChange }) => (
+interface PageProps {
+  index: number;
+  onChange: (e: number) => void;
+}
+const Page = ({ index, onChange }: PageProps) => (
   <li>
     <a
       className="pagination-link"

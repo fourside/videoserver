@@ -1,6 +1,4 @@
 import * as React from 'react';
-import { useState } from 'react';
-import Client from '../shared/client';
 
 export interface Progress {
   title: string;
@@ -37,9 +35,13 @@ export const ProgressItem = (props: Progress) => {
   );
 };
 
-const ProgressThumbnail = ({ image, title }) => {
+interface ThumbnailProps {
+  image: string;
+  title: string;
+}
+const ProgressThumbnail = ({ image, title }: ThumbnailProps) => {
   if (image === undefined) {
-    return <div className="is-loading" />
+    return <div className="is-loading" />;
   }
   return <img src={image} data-sizes="auto" alt={title} />;
 };

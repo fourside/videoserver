@@ -4,7 +4,7 @@ interface Props {
   toggleModal: () => void;
 }
 
-const NoVideo = ({ toggleModal }) => (
+const NoVideo = ({ toggleModal }: Props) => (
   <div className="no-video notification is-info">
     <p>
       There is no video. <a onClick={toggleModal}>Add a video in the form.</a>

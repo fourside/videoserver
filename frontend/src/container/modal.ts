@@ -1,4 +1,3 @@
-import * as React from 'react';
 import { connect } from 'react-redux';
 
 import { closeModal } from '../modules/modal';
@@ -20,4 +19,3 @@ export default connect(
   mapStateToProps,
   mapDispatchToProps
 )(Modal);
-
