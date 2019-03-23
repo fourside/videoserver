@@ -84,12 +84,12 @@ func streamStdoutReader(r io.Reader, url string, channel chan progress, requestI
 	go func() {
 		for {
 			<-channel
-			channel <- progress{Title: title, Percent: percent, ETA: eta, CreatedAt: now}
 			if isEnd {
 				delete(progressMap, requestID)
 				close(channel)
 				break
 			}
+			channel <- progress{Title: title, Percent: percent, ETA: eta, CreatedAt: now}
 		}
 	}()
 	for scanner.Scan() {
