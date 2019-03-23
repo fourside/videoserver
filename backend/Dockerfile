@@ -12,7 +12,6 @@ RUN make
 
 FROM alpine:3.9
 WORKDIR /work
-COPY --from=builder /go/src/github.com/fourside/videoserver/videoserver .
 RUN apk add \
         python \
         tzdata \
@@ -20,5 +19,6 @@ RUN apk add \
     && wget https://yt-dl.org/downloads/latest/youtube-dl -O /usr/local/bin/youtube-dl \
     && chmod a+rx /usr/local/bin/youtube-dl \
     && mkdir public
+COPY --from=builder /go/src/github.com/fourside/videoserver/videoserver .
 CMD ["./videoserver"]
 
