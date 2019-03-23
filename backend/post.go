@@ -2,9 +2,14 @@ package main
 
 import (
 	"encoding/json"
+	"fmt"
 	"log"
 	"net/http"
 	"net/url"
+)
+
+const (
+	downloadLimit = 3
 )
 
 func postURL(w http.ResponseWriter, r *http.Request) {
@@ -14,6 +19,11 @@ func postURL(w http.ResponseWriter, r *http.Request) {
 	}
 	if r.Header.Get("Content-Type") != "application/json" {
 		w.WriteHeader(http.StatusNotAcceptable)
+		return
+	}
+	if len(progressMap) >= downloadLimit {
+		w.WriteHeader(http.StatusBadRequest)
+		responseError(w, fmt.Errorf("download limited: %v", len(progressMap)))
 		return
 	}
 
