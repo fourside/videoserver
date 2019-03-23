@@ -57,7 +57,12 @@ const List = (props: RouterProps) => {
     return <Loading />;
   }
   if (listRes.videos.length === 0) {
-    return <NoVideo />;
+    return (
+      <>
+        <ProgressList />
+        <NoVideo />;
+      </>
+    );
   }
 
   return (

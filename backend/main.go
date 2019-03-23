@@ -39,7 +39,7 @@ func main() {
 	router.HandleFunc("/api/list/{category}", list)
 	router.HandleFunc("/api/category", category)
 	router.HandleFunc("/api/progress", progressAPI)
-	router.PathPrefix("/public/").Handler(http.StripPrefix("/public/", http.FileServer(http.Dir(publicDir))))
+	router.PathPrefix("/").Handler(http.FileServer(http.Dir(publicDir)))
 
 	server := &http.Server{
 		Addr:     ":" + port,
@@ -135,6 +135,7 @@ func baseFilename(path string) string {
 }
 
 func escapeFilename(path string) string {
+	path = strings.Replace(path, publicDir, "", 1)
 	dir, file := filepath.Split(path)
 	escaped := filepath.Join(dir, url.PathEscape(file))
 	return escaped

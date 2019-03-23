@@ -1,0 +1,4 @@
+Dockerfile
+*.exe
+public
+vendor
