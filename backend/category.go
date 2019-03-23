@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"net/http"
+	"os"
 	"path/filepath"
 	"sort"
 )
@@ -35,8 +36,14 @@ func globCategory() ([]string, error) {
 	}
 	var category = []string{}
 	for _, catDir := range catDirs {
-		base := filepath.Base(catDir)
-		category = append(category, base)
+		finfo, err := os.Stat(catDir)
+		if err != nil {
+			return nil, err
+		}
+		if finfo.IsDir() {
+			base := filepath.Base(catDir)
+			category = append(category, base)
+		}
 	}
 	sort.Strings(category)
 	return category, nil
