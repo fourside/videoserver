@@ -6,7 +6,7 @@ const bundler = new Bundler('src/index.html');
 const app = express();
 
 app.use(
-  ['/api', '/public', '/feed'],
+  ['/api', '/feed', '/*(jpg|mp4|webm|mkv)'],
   proxy({
     //target: 'http://192.168.99.100' // docker toolbox
     target: 'http://localhost:8080',
